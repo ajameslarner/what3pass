@@ -6,8 +6,23 @@
         xmlns:gmaps="clr-namespace:GMap.NET.WindowsPresentation;assembly=GMap.NET.WindowsPresentation"
         xmlns:local="clr-namespace:what3pass"
         mc:Ignorable="d"
-        Title="what3pass" Height="650" Width="850" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize">
+        Title="what3pass" Height="535" Width="850" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize">
     <Grid>
-        <gmaps:GMapControl x:Name="mapView" Loaded="mapView_Loaded" />
+        <DockPanel LastChildFill = "True">
+            <StackPanel DockPanel.Dock = "Left" Width="350">
+                <Label Content="New Entry" FontSize="28" FontFamily="Segoe UI Variable Display Light" Height="100" Width="350" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                <GridSplitter Height="10" Width="350"/>
+            </StackPanel>
+            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Height="35" Background="#FFDFDFDF">
+                <Button x:Name="btn_location" BorderBrush="#00000000" Click="btn_location_Click" Foreground="#00000000" Height="25" Width="25">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/icon2-location.png" Stretch="Uniform" TileMode="None" />
+                    </Button.Background>
+                </Button>
+            </StackPanel>
+            <StackPanel DockPanel.Dock ="Right">
+                <gmaps:GMapControl x:Name="mapView" Loaded="mapView_Loaded" Width="500" Height="500" />
+            </StackPanel>
+        </DockPanel>
     </Grid>
 </Window>

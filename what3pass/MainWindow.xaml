@@ -7,14 +7,14 @@
         mc:Ignorable="d"
         Title="what3pass" Height="450" Width="650" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
     <Grid>
-        <Label x:Name="lbl_title" Content="what3pass" HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="Segoe UI Variable Display Semibold" FontSize="68" Foreground="#FF4EBFFF" Margin="0,37,0,0"/>
-        <Label x:Name="lbl_welcome" Content="Welcome" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="28" FontFamily="Segoe UI Variable Display Light" Margin="0,132,0,0" />
-        <Button x:Name="btn_newentry" Content="New Entry [+]" HorizontalAlignment="Left" Margin="220,0,0,0" VerticalAlignment="Center" Height="33" Width="95" BorderBrush="White" Click="btn_newentry_Click"/>
-        <Button x:Name="btn_viewentries" Content="View Entries" HorizontalAlignment="Left" Margin="335,0,0,0" VerticalAlignment="Center" Height="33" Width="95" BorderBrush="White" Click="btn_viewentries_Click"/>
-        <Button x:Name="btn_about" Content="About" HorizontalAlignment="Center" Margin="0,244,0,0" VerticalAlignment="Top" Height="33" Width="94" BorderBrush="White" Click="btn_about_Click"/>
-        <Button x:Name="btn_lbe" Content="LBE" HorizontalAlignment="Center" Margin="0,282,0,0" VerticalAlignment="Top" Height="33" Width="94" BorderBrush="White" Click="btn_lbe_Click"/>
-        <Button x:Name="btn_ref" Content="Ref" HorizontalAlignment="Center" Margin="0,320,0,0" VerticalAlignment="Top" Height="33" Width="94" BorderBrush="White" Click="btn_ref_Click"/>
-        <Button x:Name="btn_exit" Content="Exit" HorizontalAlignment="Center" Margin="0,358,0,0" VerticalAlignment="Top" Height="21" Width="62" BorderBrush="White" Click="btn_exit_Click"/>
-        <TextBlock x:Name="txt_info" TextAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" Background="White" Height="250" Width="400" Margin="0,200,0,0" Visibility="Hidden" MouseLeftButtonDown="txt_info_MouseLeftButtonDown"/>
+        <Label x:Name="lbl_title" Content="what3pass" HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="Segoe UI Variable Display Semibold" FontSize="68" Foreground="#FF4EBFFF" Margin="0,5,0,0"/>
+        <Label x:Name="lbl_welcome" Content="Welcome" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="28" FontFamily="Segoe UI Variable Display Light" Margin="0,100,0,0" />
+        <Button x:Name="btn_newentry" Content="New Entry [+]" HorizontalAlignment="Left" Margin="220,173,0,0" VerticalAlignment="Top" Height="33" Width="95" BorderBrush="White" Click="btn_newentry_Click"/>
+        <Button x:Name="btn_viewentries" Content="View Entries" HorizontalAlignment="Left" Margin="335,173,0,0" VerticalAlignment="Top" Height="33" Width="95" BorderBrush="White" Click="btn_viewentries_Click"/>
+        <Button x:Name="btn_about" Content="About" HorizontalAlignment="Center" Margin="0,224,0,0" VerticalAlignment="Top" Height="33" Width="94" BorderBrush="White" Click="btn_about_Click"/>
+        <Button x:Name="btn_lbe" Content="LBE" HorizontalAlignment="Center" Margin="0,262,0,0" VerticalAlignment="Top" Height="33" Width="94" BorderBrush="White" Click="btn_lbe_Click"/>
+        <Button x:Name="btn_ref" Content="Ref" HorizontalAlignment="Center" Margin="0,300,0,0" VerticalAlignment="Top" Height="33" Width="94" BorderBrush="White" Click="btn_ref_Click"/>
+        <Button x:Name="btn_exit" Content="Exit" HorizontalAlignment="Center" Margin="0,338,0,0" VerticalAlignment="Top" Height="21" Width="62" BorderBrush="White" Click="btn_exit_Click"/>
+        <TextBlock x:Name="txt_info" TextAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" Background="White" Height="300" Width="400" Margin="0,168,0,-34" Visibility="Hidden" MouseLeftButtonDown="txt_info_MouseLeftButtonDown"/>
     </Grid>
 </Window>
