@@ -146,6 +146,18 @@
   <ItemGroup>
     <Resource Include="icon2-location.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons8-grid-50.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons8-map-50.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons8-minus-48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons8-plus-50.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

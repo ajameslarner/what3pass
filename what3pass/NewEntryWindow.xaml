@@ -6,23 +6,112 @@
         xmlns:gmaps="clr-namespace:GMap.NET.WindowsPresentation;assembly=GMap.NET.WindowsPresentation"
         xmlns:local="clr-namespace:what3pass"
         mc:Ignorable="d"
-        Title="what3pass" Height="535" Width="850" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize">
+        Title="what3pass" Height="535" Width="875" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize">
     <Grid>
         <DockPanel LastChildFill = "True">
+            <Menu DockPanel.Dock="Top" Background="white">
+                <MenuItem Header="_File">
+                    <MenuItem Header="_New" />
+                    <MenuItem Header="_Open" />
+                    <MenuItem Header="_Save" />
+                    <Separator />
+                    <MenuItem Header="_Exit" />
+                </MenuItem>
+            </Menu>
             <StackPanel DockPanel.Dock = "Left" Width="350">
                 <Label Content="New Entry" FontSize="28" FontFamily="Segoe UI Variable Display Light" Height="100" Width="350" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
-                <GridSplitter Height="10" Width="350"/>
+                <GridSplitter Height="10" Width="350" />
+                <Grid Height="391">
+                    <Grid x:Name="grd_newentry_begin" HorizontalAlignment="Center" Width="200" Margin="0,26,0,35" Visibility="Visible">
+                        <Label Content="New Entry" FontSize="18" FontFamily="Segoe UI Variable Display Light" HorizontalContentAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="100" Height="50" Margin="50,75,50,0" />
+                        <Button x:Name="btn_newentry_start" Content="Start" HorizontalAlignment="Center" Margin="0,130,0,0" VerticalAlignment="Top" Height="25" Width="56" BorderBrush="{x:Null}" Click="btn_newentry_start_Click"/>
+                    </Grid>
+                    <Grid x:Name="grd_newentry_data" HorizontalAlignment="Center" Width="250" Margin="0,26,0,35" Visibility="Hidden">
+                        <Label Content="Enter your data" FontSize="14" FontFamily="Segoe UI Variable Display Light" HorizontalContentAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="100" Height="50" Margin="50,22,50,0" />
+                        <Button Content="Next" HorizontalAlignment="Left" Margin="158,295,0,0" VerticalAlignment="Top" Height="25" Width="56" BorderBrush="{x:Null}"/>
+                        <Button Content="Back" HorizontalAlignment="Left" Margin="40,295,0,0" VerticalAlignment="Top" Height="25" Width="56" BorderBrush="{x:Null}"/>
+                        <TextBox HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="40,95,0,0" TextWrapping="Wrap" Text="Username" VerticalAlignment="Top" Width="188" BorderBrush="{x:Null}" Background="#FFF1F1F1" Height="25"/>
+                        <TextBox HorizontalAlignment="Left" Margin="40,125,0,0" TextWrapping="Wrap" Text="Password" VerticalAlignment="Top" Width="98" BorderBrush="{x:Null}" Background="#FFF1F1F1"/>
+                        <Button Content="Generate Password" HorizontalAlignment="Left" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="143,125,0,0" VerticalAlignment="Top" Height="18" FontSize="8" Width="85" BorderBrush="{x:Null}" Background="#FFF1F1F1"/>
+                    </Grid>
+                </Grid>
             </StackPanel>
-            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Height="35" Background="#FFDFDFDF">
-                <Button x:Name="btn_location" BorderBrush="#00000000" Click="btn_location_Click" Foreground="#00000000" Height="25" Width="25">
+            <StackPanel DockPanel.Dock="Right" Orientation="Vertical" Background="White">
+                <Button x:Name="btn_location" BorderBrush="#00000000" Click="btn_location_Click" Margin="0,10,0,0" Foreground="#00000000" Height="25" Width="25">
                     <Button.Background>
                         <ImageBrush ImageSource="/icon2-location.png" Stretch="Uniform" TileMode="None" />
                     </Button.Background>
                 </Button>
+                <Button x:Name="btn_gridoverlay" BorderBrush="#00000000" Click="btn_gridoverlay_Click" Margin="0,10,0,0" Foreground="#00000000" Height="25" Width="25">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/icons8-grid-50.png" Stretch="Uniform" TileMode="None" />
+                    </Button.Background>
+                </Button>
+                <Button x:Name="btn_maptype" BorderBrush="#00000000" Click="btn_maptype_Click" Margin="0,10,0,0" Foreground="#00000000" Height="25" Width="25">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/icons8-map-50.png" Stretch="Uniform" TileMode="None" />
+                    </Button.Background>
+                </Button>
+                <Button x:Name="btn_mapplus" BorderBrush="#00000000" Click="btn_mapplus_Click" Margin="0,10,0,0" Foreground="#00000000" Height="25" Width="25">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/icons8-plus-50.png" Stretch="Uniform" TileMode="None" />
+                    </Button.Background>
+                </Button>
+                <Button x:Name="btn_mapminus" BorderBrush="#00000000" Click="btn_mapminus_Click" Margin="0,10,0,0" Foreground="#00000000" Height="25" Width="25">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/icons8-minus-48.png" Stretch="Uniform" TileMode="None" />
+                    </Button.Background>
+                </Button>
             </StackPanel>
             <StackPanel DockPanel.Dock ="Right">
-                <gmaps:GMapControl x:Name="mapView" Loaded="mapView_Loaded" Width="500" Height="500" />
+                <gmaps:GMapControl x:Name="mapView" Loaded="mapView_Loaded" Width="500" Height="500" ShowTileGridLines="True" >
+                </gmaps:GMapControl>
             </StackPanel>
         </DockPanel>
+        <Grid x:Name="grd_gridoverlay" Background="Transparent" Height="500" Width="500" Margin="350,19,25,0" Visibility="Visible" IsEnabled="False" Loaded="grd_gridoverlay_Loaded">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+            </Grid.RowDefinitions>
+            <Button x:Name="btn_00" Click="btn_00_Click" Content="x" Grid.Column="0" Grid.Row="0" BorderBrush="{x:Null}" Background="LightBlue" Opacity="0.399" Cursor="Hand" MouseDown="btn_00_MouseDown"></Button>
+            <Button x:Name="btn_01" Click="btn_01_Click" Content="x" Grid.Column="1" Grid.Row="0" BorderBrush="{x:Null}" Background="LightBlue" Opacity="0.399" Cursor="Hand"></Button>
+            <Button x:Name="btn_02" Click="btn_02_Click" Content="x" Grid.Column="2" Grid.Row="0" BorderBrush="{x:Null}" Background="LightBlue" Opacity="0.399" Cursor="Hand"></Button>
+            <Button x:Name="btn_03" Click="btn_03_Click" Content="x" Grid.Column="3" Grid.Row="0" BorderBrush="{x:Null}" Background="LightBlue" Opacity="0.399" Cursor="Hand"></Button>
+            <Button x:Name="btn_04" Click="btn_04_Click" Content="x" Grid.Column="4" Grid.Row="0" BorderBrush="{x:Null}" Background="LightBlue" Opacity="0.399" Cursor="Hand"></Button>
+
+            <Button x:Name="btn_10" Click="btn_10_Click" Content="x" Grid.Column="0" Grid.Row="1" BorderBrush="{x:Null}" Background="LightBlue" Opacity="0.399" Cursor="Hand"></Button>
+            <Button x:Name="btn_11" Click="btn_11_Click" Content="x" Grid.Column="1" Grid.Row="1" BorderBrush="{x:Null}" Background="LightBlue" Opacity="0.399" Cursor="Hand"></Button>
+            <Button x:Name="btn_12" Click="btn_12_Click" Content="x" Grid.Column="2" Grid.Row="1" BorderBrush="{x:Null}" Background="LightBlue" Opacity="0.399" Cursor="Hand"></Button>
+            <Button x:Name="btn_13" Click="btn_13_Click" Content="x" Grid.Column="3" Grid.Row="1" BorderBrush="{x:Null}" Background="LightBlue" Opacity="0.399" Cursor="Hand"></Button>
+            <Button x:Name="btn_14" Click="btn_14_Click" Content="x" Grid.Column="4" Grid.Row="1" BorderBrush="{x:Null}" Background="LightBlue" Opacity="0.399" Cursor="Hand"></Button>
+
+            <Button x:Name="btn_20" Click="btn_20_Click" Content="x" Grid.Column="0" Grid.Row="2" BorderBrush="{x:Null}" Background="LightBlue" Opacity="0.399" Cursor="Hand"></Button>
+            <Button x:Name="btn_21" Click="btn_21_Click" Content="x" Grid.Column="1" Grid.Row="2" BorderBrush="{x:Null}" Background="LightBlue" Opacity="0.399" Cursor="Hand"></Button>
+            <Button x:Name="btn_22" Click="btn_22_Click" Content="x" Grid.Column="2" Grid.Row="2" BorderBrush="{x:Null}" Background="LightBlue" Opacity="0.399" Cursor="Hand"></Button>
+            <Button x:Name="btn_23" Click="btn_23_Click" Content="x" Grid.Column="3" Grid.Row="2" BorderBrush="{x:Null}" Background="LightBlue" Opacity="0.399" Cursor="Hand"></Button>
+            <Button x:Name="btn_24" Click="btn_24_Click" Content="x" Grid.Column="4" Grid.Row="2" BorderBrush="{x:Null}" Background="LightBlue" Opacity="0.399" Cursor="Hand"></Button>
+
+            <Button x:Name="btn_30" Click="btn_30_Click" Content="x" Grid.Column="0" Grid.Row="3" BorderBrush="{x:Null}" Background="LightBlue" Opacity="0.399" Cursor="Hand"></Button>
+            <Button x:Name="btn_31" Click="btn_31_Click" Content="x" Grid.Column="1" Grid.Row="3" BorderBrush="{x:Null}" Background="LightBlue" Opacity="0.399" Cursor="Hand"></Button>
+            <Button x:Name="btn_32" Click="btn_32_Click" Content="x" Grid.Column="2" Grid.Row="3" BorderBrush="{x:Null}" Background="LightBlue" Opacity="0.399" Cursor="Hand"></Button>
+            <Button x:Name="btn_33" Click="btn_33_Click" Content="x" Grid.Column="3" Grid.Row="3" BorderBrush="{x:Null}" Background="LightBlue" Opacity="0.399" Cursor="Hand"></Button>
+            <Button x:Name="btn_34" Click="btn_34_Click" Content="x" Grid.Column="4" Grid.Row="3" BorderBrush="{x:Null}" Background="LightBlue" Opacity="0.399" Cursor="Hand"></Button>
+
+            <Button x:Name="btn_40" Click="btn_40_Click" Content="x" Grid.Column="0" Grid.Row="4" BorderBrush="{x:Null}" Background="LightBlue" Opacity="0.399" Cursor="Hand"></Button>
+            <Button x:Name="btn_41" Click="btn_41_Click" Content="x" Grid.Column="1" Grid.Row="4" BorderBrush="{x:Null}" Background="LightBlue" Opacity="0.399" Cursor="Hand"></Button>
+            <Button x:Name="btn_42" Click="btn_42_Click" Content="x" Grid.Column="2" Grid.Row="4" BorderBrush="{x:Null}" Background="LightBlue" Opacity="0.399" Cursor="Hand"></Button>
+            <Button x:Name="btn_43" Click="btn_43_Click" Content="x" Grid.Column="3" Grid.Row="4" BorderBrush="{x:Null}" Background="LightBlue" Opacity="0.399" Cursor="Hand"></Button>
+            <Button x:Name="btn_44" Click="btn_44_Click" Content="x" Grid.Column="4" Grid.Row="4" BorderBrush="{x:Null}" Background="LightBlue" Opacity="0.399" Cursor="Hand"></Button>
+        </Grid>
     </Grid>
 </Window>
