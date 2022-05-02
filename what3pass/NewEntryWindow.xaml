@@ -6,37 +6,58 @@
         xmlns:gmaps="clr-namespace:GMap.NET.WindowsPresentation;assembly=GMap.NET.WindowsPresentation"
         xmlns:local="clr-namespace:what3pass"
         mc:Ignorable="d"
-        Title="what3pass" Height="535" Width="875" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize">
+        Title="what3pass" Height="535" Width="905" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize">
+    <Window.Resources>
+        <ImageBrush x:Key="ButtonImage"></ImageBrush>
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource ButtonImage}"></Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                    Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" 
+                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" RecognizesAccessKey="True"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Cursor" Value="Hand" />
+                                <Setter Property="Opacity" Value="0.3" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.1" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
     <Grid>
         <DockPanel LastChildFill = "True">
-            <Menu DockPanel.Dock="Top" Background="white">
-                <MenuItem Header="_File">
-                    <MenuItem Header="_New" />
-                    <MenuItem Header="_Open" />
-                    <MenuItem Header="_Save" />
-                    <Separator />
-                    <MenuItem Header="_Exit" />
-                </MenuItem>
-            </Menu>
             <StackPanel DockPanel.Dock = "Left" Width="350">
-                <Label Content="New Entry" FontSize="28" FontFamily="Segoe UI Variable Display Light" Height="100" Width="350" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                <Label Content="What3Pass" FontSize="58" FontFamily="Segoe UI Variable Display Light" Height="100" Width="350" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
                 <GridSplitter Height="10" Width="350" />
-                <Grid Height="391">
-                    <Grid x:Name="grd_newentry_begin" HorizontalAlignment="Center" Width="200" Margin="0,26,0,35" Visibility="Visible">
-                        <Label Content="New Entry" FontSize="18" FontFamily="Segoe UI Variable Display Light" HorizontalContentAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="100" Height="50" Margin="50,75,50,0" />
-                        <Button x:Name="btn_newentry_start" Content="Start" HorizontalAlignment="Center" Margin="0,130,0,0" VerticalAlignment="Top" Height="25" Width="56" BorderBrush="{x:Null}" Click="btn_newentry_start_Click"/>
+                <Grid Height="410">
+                    <Grid x:Name="grd_newentry_begin" HorizontalAlignment="Center" Width="200" Margin="0,26,0,35" Visibility="Hidden">
+                        <Label Content="Let's begin..." FontSize="18" FontFamily="Segoe UI Variable Display Light" HorizontalContentAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="100" Height="50" Margin="50,75,50,0" />
                     </Grid>
                     <Grid x:Name="grd_newentry_data" HorizontalAlignment="Center" Width="250" Margin="0,26,0,35" Visibility="Hidden">
-                        <Label Content="Enter your data" FontSize="14" FontFamily="Segoe UI Variable Display Light" HorizontalContentAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="100" Height="50" Margin="50,22,50,0" />
-                        <Button Content="Next" HorizontalAlignment="Left" Margin="158,295,0,0" VerticalAlignment="Top" Height="25" Width="56" BorderBrush="{x:Null}"/>
-                        <Button Content="Back" HorizontalAlignment="Left" Margin="40,295,0,0" VerticalAlignment="Top" Height="25" Width="56" BorderBrush="{x:Null}"/>
-                        <TextBox HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="40,95,0,0" TextWrapping="Wrap" Text="Username" VerticalAlignment="Top" Width="188" BorderBrush="{x:Null}" Background="#FFF1F1F1" Height="25"/>
-                        <TextBox HorizontalAlignment="Left" Margin="40,125,0,0" TextWrapping="Wrap" Text="Password" VerticalAlignment="Top" Width="98" BorderBrush="{x:Null}" Background="#FFF1F1F1"/>
-                        <Button Content="Generate Password" HorizontalAlignment="Left" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="143,125,0,0" VerticalAlignment="Top" Height="18" FontSize="8" Width="85" BorderBrush="{x:Null}" Background="#FFF1F1F1"/>
+                        <Label Content="First, we need your details" FontSize="14" FontFamily="Segoe UI Variable Display Light" HorizontalContentAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" Height="60" Width="225"/>
+                        <TextBox x:Name="txt_platform" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0,140,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="188" BorderBrush="{x:Null}" Background="#FFF1F1F1" Height="25"/>
+                        <TextBox x:Name="txt_username" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="31,170,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="24" Width="98" BorderBrush="{x:Null}" Background="#FFF1F1F1"/>
+                        <Button Content="Generate Password" HorizontalAlignment="Left" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="134,170,0,0" VerticalAlignment="Top" Height="24" FontSize="8" Width="85" BorderBrush="{x:Null}" Background="#FFF1F1F1"/>
+                        <TextBox x:Name="txt_password" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0,110,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="188" BorderBrush="{x:Null}" Background="#FFF1F1F1" Height="25"/>
                     </Grid>
+                    <Grid x:Name="grd_newentry_map" HorizontalAlignment="Center" Width="250" Margin="0,26,0,35" Visibility="Hidden">
+                        <Label Content="Now, choose your 'safe-zones'" FontSize="14" FontFamily="Segoe UI Variable Display Light" HorizontalContentAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" Height="60" Width="225" />
+                        <TextBox x:Name="txtbox_gridwords" HorizontalAlignment="Center" IsReadOnly="True" Margin="0,100,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="190" Height="89"/>
+                    </Grid>
+                    <Button x:Name="btn_newentry_next" Content="Next" HorizontalAlignment="Left" Margin="194,350,0,0" VerticalAlignment="Top" Height="25" Width="56" BorderBrush="{x:Null}" Click="btn_newentry_next_Click"/>
+                    <Button x:Name="btn_newentry_back" Content="Back" HorizontalAlignment="Left" Margin="76,350,0,0" VerticalAlignment="Top" Height="25" Width="56" BorderBrush="{x:Null}" Click="btn_newentry_back_Click"/>
                 </Grid>
             </StackPanel>
-            <StackPanel DockPanel.Dock="Right" Orientation="Vertical" Background="White">
+            <StackPanel DockPanel.Dock="Right" Orientation="Vertical" Background="White" Width="35">
                 <Button x:Name="btn_location" BorderBrush="#00000000" Click="btn_location_Click" Margin="0,10,0,0" Foreground="#00000000" Height="25" Width="25">
                     <Button.Background>
                         <ImageBrush ImageSource="/icon2-location.png" Stretch="Uniform" TileMode="None" />
@@ -62,13 +83,26 @@
                         <ImageBrush ImageSource="/icons8-minus-48.png" Stretch="Uniform" TileMode="None" />
                     </Button.Background>
                 </Button>
+                <Button x:Name="btn_mapsquare" BorderBrush="#00000000" Click="btn_mapsquare_Click" Margin="0,10,0,0" Foreground="#00000000" Height="25" Width="25">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/icons8-square-spinner.gif" Stretch="Uniform" TileMode="None" />
+                    </Button.Background>
+                </Button>
+                <Button x:Name="btn_mapcircle" BorderBrush="#00000000" Click="btn_mapcircle_Click" Margin="0,10,0,0" Foreground="#00000000" Height="25" Width="25">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/icons8-loading-circle.gif" Stretch="Uniform" TileMode="None" />
+                    </Button.Background>
+                </Button>
             </StackPanel>
             <StackPanel DockPanel.Dock ="Right">
-                <gmaps:GMapControl x:Name="mapView" Loaded="mapView_Loaded" Width="500" Height="500" ShowTileGridLines="True" >
-                </gmaps:GMapControl>
+
             </StackPanel>
         </DockPanel>
-        <Grid x:Name="grd_gridoverlay" Background="Transparent" Height="500" Width="500" Margin="350,19,25,0" Visibility="Visible" IsEnabled="False" Loaded="grd_gridoverlay_Loaded">
+        <Grid x:Name="grd_mappanel" Visibility="Hidden">
+            <gmaps:GMapControl x:Name="mapView" OnMapZoomChanged="mapView_OnMapZoomChanged" Margin="345,15,25,0" Loaded="mapView_Loaded" Width="500" Height="500" >
+            </gmaps:GMapControl>
+        </Grid>
+        <Grid x:Name="grd_gridoverlay" Background="Transparent" Height="250" Width="250" Margin="345,15,25,0" Visibility="Visible" IsEnabled="False" IsEnabledChanged="grd_gridoverlay_IsEnabledChanged">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
@@ -83,7 +117,7 @@
                 <RowDefinition Height="1*" />
                 <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
-            <Button x:Name="btn_00" Click="btn_00_Click" Content="x" Grid.Column="0" Grid.Row="0" BorderBrush="{x:Null}" Background="LightBlue" Opacity="0.399" Cursor="Hand" MouseDown="btn_00_MouseDown"></Button>
+            <Button x:Name="btn_00" Click="btn_00_Click" Content="x" Grid.Column="0" Grid.Row="0" BorderBrush="{x:Null}" Background="LightBlue" Opacity="0.399" Cursor="Hand"></Button>
             <Button x:Name="btn_01" Click="btn_01_Click" Content="x" Grid.Column="1" Grid.Row="0" BorderBrush="{x:Null}" Background="LightBlue" Opacity="0.399" Cursor="Hand"></Button>
             <Button x:Name="btn_02" Click="btn_02_Click" Content="x" Grid.Column="2" Grid.Row="0" BorderBrush="{x:Null}" Background="LightBlue" Opacity="0.399" Cursor="Hand"></Button>
             <Button x:Name="btn_03" Click="btn_03_Click" Content="x" Grid.Column="3" Grid.Row="0" BorderBrush="{x:Null}" Background="LightBlue" Opacity="0.399" Cursor="Hand"></Button>
