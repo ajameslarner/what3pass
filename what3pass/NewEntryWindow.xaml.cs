@@ -73,6 +73,7 @@ namespace what3pass
 
             //SetOnTickEvent(500);
         }
+
         private void SetOnTickEvent(int interval)
         {
             _OnTickEvent = new Timer(interval);
@@ -112,6 +113,7 @@ namespace what3pass
                     grd_newentry_begin.Visibility = Visibility.Hidden;
                     grd_newentry_data.Visibility = Visibility.Visible;
                     grd_newentry_map.Visibility = Visibility.Hidden;
+                    grd_newentry_processing.Visibility = Visibility.Hidden;
                     _currentEntryStage = "Data";
                     btn_newentry_back.IsEnabled = true;
                     break;
@@ -119,12 +121,38 @@ namespace what3pass
                     grd_newentry_begin.Visibility = Visibility.Hidden;
                     grd_newentry_data.Visibility = Visibility.Hidden;
                     grd_newentry_map.Visibility = Visibility.Visible;
+                    grd_newentry_processing.Visibility = Visibility.Hidden;
                     _currentEntryStage = "Map";
+                    btn_newentry_next.Content = "Finish";
+                    btn_gridoverlay.IsEnabled = true;
+                    btn_mapsquare.IsEnabled = true;
+                    btn_mapcircle.IsEnabled = true;
                     break;
                 case "Map":
                     grd_newentry_begin.Visibility = Visibility.Hidden;
                     grd_newentry_data.Visibility = Visibility.Hidden;
                     grd_newentry_map.Visibility = Visibility.Hidden;
+                    grd_newentry_processing.Visibility = Visibility.Visible;
+                    _currentEntryStage = "Processing";
+                    btn_newentry_next.IsEnabled = false;
+                    btn_newentry_back.Visibility = Visibility.Hidden;
+                    btn_newentry_next.Visibility = Visibility.Hidden;
+                    btn_gridoverlay.IsEnabled = false;
+                    btn_mapsquare.IsEnabled = false;
+                    btn_mapcircle.IsEnabled = false;
+                    btn_location.IsEnabled = false;
+                    btn_gridoverlay.IsEnabled = false;
+                    btn_maptype.IsEnabled = false;
+                    btn_mapminus.IsEnabled = false;
+                    btn_mapplus.IsEnabled = false;
+                    btn_mapsquare.IsEnabled = false;
+                    btn_mapcircle.IsEnabled = false;
+                    mapView.CanDragMap = false;
+                    grd_gridoverlay.IsEnabled = false;
+                    break;
+                case "Processing":
+                    
+                    //Start Encryption
                     break;
             }
         }
@@ -139,6 +167,7 @@ namespace what3pass
                     grd_newentry_begin.Visibility = Visibility.Visible;
                     grd_newentry_data.Visibility = Visibility.Hidden;
                     grd_newentry_map.Visibility = Visibility.Hidden;
+                    grd_newentry_processing.Visibility = Visibility.Hidden;
                     btn_newentry_back.IsEnabled = false;
                     _currentEntryStage = "Begin";
                     break;
@@ -146,7 +175,19 @@ namespace what3pass
                     grd_newentry_begin.Visibility = Visibility.Hidden;
                     grd_newentry_data.Visibility = Visibility.Visible;
                     grd_newentry_map.Visibility = Visibility.Hidden;
+                    grd_newentry_processing.Visibility = Visibility.Hidden;
                     _currentEntryStage = "Data";
+                    btn_newentry_next.Content = "Next";
+                    btn_gridoverlay.IsEnabled = false;
+                    btn_mapsquare.IsEnabled = false;
+                    btn_mapcircle.IsEnabled = false;
+                    break;
+                case "Processing":
+                    grd_newentry_begin.Visibility = Visibility.Hidden;
+                    grd_newentry_data.Visibility = Visibility.Hidden;
+                    grd_newentry_map.Visibility = Visibility.Visible;
+                    grd_newentry_processing.Visibility = Visibility.Hidden;
+                    _currentEntryStage = "Map";
                     break;
             }
         }
@@ -195,7 +236,32 @@ namespace what3pass
         private async void GetWhat3WordsFromPosAsync()
         {
             var indexResult = await _what3wordsAPIWrapper.ConvertTo3WA(new Coordinates(_localLatLong.Lat, _localLatLong.Lng)).RequestAsync();
+            if (txtbox_gridwords.Text.Contains(indexResult.Data.Words))
+            {
+                indexResult = await _what3wordsAPIWrapper.ConvertTo3WA(ShiftCoordinates(4.0, _localLatLong.Lat, _localLatLong.Lng, 4.0)).RequestAsync();
+            }
             txtbox_gridwords.Text = txtbox_gridwords.Text + indexResult.Data.Words + Environment.NewLine;
+        }
+
+        private async void RemoveWhat3WordsFromPosAsync()
+        {
+            var indexResult = await _what3wordsAPIWrapper.ConvertTo3WA(new Coordinates(_localLatLong.Lat, _localLatLong.Lng)).RequestAsync();
+            if (txtbox_gridwords.Text.Contains(indexResult.Data.Words))
+            {
+                string newResult = txtbox_gridwords.Text;
+                txtbox_gridwords.Text = newResult.Replace(indexResult.Data.Words + Environment.NewLine, "");
+            }
+        }
+
+        private Coordinates ShiftCoordinates(double distance, double Lat, double Lng, double angle)
+        {
+            double distanceNorth = Math.Sin(angle) * distance;
+            double distanceEast = Math.Cos(angle) * distance;
+            double earthRadius = 6371000;
+            double newLat = Lat + (distanceNorth / earthRadius) * 180 / Math.PI;
+            double newLon = Lng + (distanceEast / (earthRadius * Math.Cos(newLat * 180 / Math.PI))) * 180 / Math.PI;
+
+            return new Coordinates(newLat, newLon);
         }
 
         private async void GetPosFromWhat3WordsAsync()
@@ -217,6 +283,7 @@ namespace what3pass
             else if (btn_00.Background == Brushes.Red)
             {
                 btn_00.Background = Brushes.LightBlue;
+                RemoveWhat3WordsFromPosAsync();
             }
         }
 
@@ -230,6 +297,7 @@ namespace what3pass
             else if (btn_01.Background == Brushes.Red)
             {
                 btn_01.Background = Brushes.LightBlue;
+                RemoveWhat3WordsFromPosAsync();
             }
         }
 
@@ -243,6 +311,7 @@ namespace what3pass
             else if (btn_02.Background == Brushes.Red)
             {
                 btn_02.Background = Brushes.LightBlue;
+                RemoveWhat3WordsFromPosAsync();
             }
         }
 
@@ -256,6 +325,7 @@ namespace what3pass
             else if (btn_03.Background == Brushes.Red)
             {
                 btn_03.Background = Brushes.LightBlue;
+                RemoveWhat3WordsFromPosAsync();
             }
         }
 
@@ -269,6 +339,7 @@ namespace what3pass
             else if (btn_04.Background == Brushes.Red)
             {
                 btn_04.Background = Brushes.LightBlue;
+                RemoveWhat3WordsFromPosAsync();
             }
         }
 
@@ -282,6 +353,7 @@ namespace what3pass
             else if (btn_10.Background == Brushes.Red)
             {
                 btn_10.Background = Brushes.LightBlue;
+                RemoveWhat3WordsFromPosAsync();
             }
         }
 
@@ -295,6 +367,7 @@ namespace what3pass
             else if (btn_11.Background == Brushes.Red)
             {
                 btn_11.Background = Brushes.LightBlue;
+                RemoveWhat3WordsFromPosAsync();
             }
         }
 
@@ -308,6 +381,7 @@ namespace what3pass
             else if (btn_12.Background == Brushes.Red)
             {
                 btn_12.Background = Brushes.LightBlue;
+                RemoveWhat3WordsFromPosAsync();
             }
         }
 
@@ -321,6 +395,7 @@ namespace what3pass
             else if (btn_13.Background == Brushes.Red)
             {
                 btn_13.Background = Brushes.LightBlue;
+                RemoveWhat3WordsFromPosAsync();
             }
         }
 
@@ -334,6 +409,7 @@ namespace what3pass
             else if (btn_14.Background == Brushes.Red)
             {
                 btn_14.Background = Brushes.LightBlue;
+                RemoveWhat3WordsFromPosAsync();
             }
         }
 
@@ -347,6 +423,7 @@ namespace what3pass
             else if (btn_20.Background == Brushes.Red)
             {
                 btn_20.Background = Brushes.LightBlue;
+                RemoveWhat3WordsFromPosAsync();
             }
         }
 
@@ -360,6 +437,7 @@ namespace what3pass
             else if (btn_21.Background == Brushes.Red)
             {
                 btn_21.Background = Brushes.LightBlue;
+                RemoveWhat3WordsFromPosAsync();
             }
         }
 
@@ -373,6 +451,7 @@ namespace what3pass
             else if (btn_22.Background == Brushes.Red)
             {
                 btn_22.Background = Brushes.LightBlue;
+                RemoveWhat3WordsFromPosAsync();
             }
         }
 
@@ -386,6 +465,7 @@ namespace what3pass
             else if (btn_23.Background == Brushes.Red)
             {
                 btn_23.Background = Brushes.LightBlue;
+                RemoveWhat3WordsFromPosAsync();
             }
         }
 
@@ -399,6 +479,7 @@ namespace what3pass
             else if (btn_24.Background == Brushes.Red)
             {
                 btn_24.Background = Brushes.LightBlue;
+                RemoveWhat3WordsFromPosAsync();
             }
         }
 
@@ -412,6 +493,7 @@ namespace what3pass
             else if (btn_30.Background == Brushes.Red)
             {
                 btn_30.Background = Brushes.LightBlue;
+                RemoveWhat3WordsFromPosAsync();
             }
         }
 
@@ -425,6 +507,7 @@ namespace what3pass
             else if (btn_31.Background == Brushes.Red)
             {
                 btn_31.Background = Brushes.LightBlue;
+                RemoveWhat3WordsFromPosAsync();
             }
         }
 
@@ -438,6 +521,7 @@ namespace what3pass
             else if (btn_32.Background == Brushes.Red)
             {
                 btn_32.Background = Brushes.LightBlue;
+                RemoveWhat3WordsFromPosAsync();
             }
         }
 
@@ -451,6 +535,7 @@ namespace what3pass
             else if (btn_33.Background == Brushes.Red)
             {
                 btn_33.Background = Brushes.LightBlue;
+                RemoveWhat3WordsFromPosAsync();
             }
         }
 
@@ -464,6 +549,7 @@ namespace what3pass
             else if (btn_34.Background == Brushes.Red)
             {
                 btn_34.Background = Brushes.LightBlue;
+                RemoveWhat3WordsFromPosAsync();
             }
         }
 
@@ -477,6 +563,7 @@ namespace what3pass
             else if (btn_40.Background == Brushes.Red)
             {
                 btn_40.Background = Brushes.LightBlue;
+                RemoveWhat3WordsFromPosAsync();
             }
         }
 
@@ -490,6 +577,7 @@ namespace what3pass
             else if (btn_41.Background == Brushes.Red)
             {
                 btn_41.Background = Brushes.LightBlue;
+                RemoveWhat3WordsFromPosAsync();
             }
         }
 
@@ -503,6 +591,7 @@ namespace what3pass
             else if (btn_42.Background == Brushes.Red)
             {
                 btn_42.Background = Brushes.LightBlue;
+                RemoveWhat3WordsFromPosAsync();
             }
         }
 
@@ -516,6 +605,7 @@ namespace what3pass
             else if (btn_43.Background == Brushes.Red)
             {
                 btn_43.Background = Brushes.LightBlue;
+                RemoveWhat3WordsFromPosAsync();
             }
         }
 
@@ -529,6 +619,7 @@ namespace what3pass
             else if (btn_44.Background == Brushes.Red)
             {
                 btn_44.Background = Brushes.LightBlue;
+                RemoveWhat3WordsFromPosAsync();
             }
         }
 
@@ -611,7 +702,7 @@ namespace what3pass
                 btn_mapsquare.IsEnabled = false;
                 btn_mapcircle.IsEnabled = false;
             }
-            else
+            else if (_currentEntryStage == "Map" && mapView.Zoom == 21)
             {
                 btn_gridoverlay.IsEnabled = true;
                 btn_mapsquare.IsEnabled = true;

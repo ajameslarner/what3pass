@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:gmaps="clr-namespace:GMap.NET.WindowsPresentation;assembly=GMap.NET.WindowsPresentation"
         xmlns:local="clr-namespace:what3pass"
+        xmlns:gif="http://wpfanimatedgif.codeplex.com"
         mc:Ignorable="d"
         Title="what3pass" Height="535" Width="905" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize">
     <Window.Resources>
@@ -40,21 +41,25 @@
                 <GridSplitter Height="10" Width="350" />
                 <Grid Height="410">
                     <Grid x:Name="grd_newentry_begin" HorizontalAlignment="Center" Width="200" Margin="0,26,0,35" Visibility="Hidden">
-                        <Label Content="Let's begin..." FontSize="18" FontFamily="Segoe UI Variable Display Light" HorizontalContentAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="100" Height="50" Margin="50,75,50,0" />
+                        <Label Content="Let's begin..." FontSize="18" FontFamily="Segoe UI Variable Display Light" HorizontalContentAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="100" Height="50" Margin="0,124,0,0" HorizontalAlignment="Center" />
                     </Grid>
                     <Grid x:Name="grd_newentry_data" HorizontalAlignment="Center" Width="250" Margin="0,26,0,35" Visibility="Hidden">
-                        <Label Content="First, we need your details" FontSize="14" FontFamily="Segoe UI Variable Display Light" HorizontalContentAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" Height="60" Width="225"/>
-                        <TextBox x:Name="txt_platform" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0,140,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="188" BorderBrush="{x:Null}" Background="#FFF1F1F1" Height="25"/>
-                        <TextBox x:Name="txt_username" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="31,170,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="24" Width="98" BorderBrush="{x:Null}" Background="#FFF1F1F1"/>
-                        <Button Content="Generate Password" HorizontalAlignment="Left" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="134,170,0,0" VerticalAlignment="Top" Height="24" FontSize="8" Width="85" BorderBrush="{x:Null}" Background="#FFF1F1F1"/>
-                        <TextBox x:Name="txt_password" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0,110,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="188" BorderBrush="{x:Null}" Background="#FFF1F1F1" Height="25"/>
+                        <TextBlock Text="Enter the details for your account you wish to store, otherwise create a new entry and generate a strong password instead!" FontSize="14" FontFamily="Segoe UI Variable Display Light" VerticalAlignment="Top" Height="89" Width="206" HorizontalAlignment="Center" TextWrapping="Wrap" Margin="0,59,0,0" TextAlignment="Center" />
+                        <TextBox x:Name="txt_platform" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0,204,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="188" BorderBrush="{x:Null}" Background="#FFF1F1F1" Height="25"/>
+                        <TextBox x:Name="txt_username" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="31,234,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="26" Width="98" BorderBrush="{x:Null}" Background="#FFF1F1F1"/>
+                        <Button Content="Generate Password" HorizontalAlignment="Left" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="134,234,0,0" VerticalAlignment="Top" Height="26" FontSize="8" Width="85" BorderBrush="{x:Null}" Background="#FFF1F1F1"/>
+                        <TextBox x:Name="txt_password" HorizontalAlignment="Center" VerticalContentAlignment="Center" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="188" BorderBrush="{x:Null}" Background="#FFF1F1F1" Height="25" Margin="0,174,0,0"/>
                     </Grid>
                     <Grid x:Name="grd_newentry_map" HorizontalAlignment="Center" Width="250" Margin="0,26,0,35" Visibility="Hidden">
-                        <Label Content="Now, choose your 'safe-zones'" FontSize="14" FontFamily="Segoe UI Variable Display Light" HorizontalContentAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" Height="60" Width="225" />
-                        <TextBox x:Name="txtbox_gridwords" HorizontalAlignment="Center" IsReadOnly="True" Margin="0,100,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="190" Height="89"/>
+                        <TextBlock Text="Navigate to your chosen position and enable the grid to choose the safe-zones where your data can be accessed from." FontSize="14" FontFamily="Segoe UI Variable Display Light" VerticalAlignment="Top" Height="89" Width="206" HorizontalAlignment="Center" TextWrapping="Wrap" Margin="0,59,0,0" TextAlignment="Center" />
+                        <TextBox x:Name="txtbox_gridwords" HorizontalAlignment="Center" IsReadOnly="True" Margin="0,174,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="190" Height="90"/>
                     </Grid>
-                    <Button x:Name="btn_newentry_next" Content="Next" HorizontalAlignment="Left" Margin="194,350,0,0" VerticalAlignment="Top" Height="25" Width="56" BorderBrush="{x:Null}" Click="btn_newentry_next_Click"/>
-                    <Button x:Name="btn_newentry_back" Content="Back" HorizontalAlignment="Left" Margin="76,350,0,0" VerticalAlignment="Top" Height="25" Width="56" BorderBrush="{x:Null}" Click="btn_newentry_back_Click"/>
+                    <Grid x:Name="grd_newentry_processing" HorizontalAlignment="Center" Width="250" Margin="0,26,0,35" Visibility="Hidden">
+                        <TextBlock Text="Processing a complex mathematical equation, please wait..." FontSize="18" FontFamily="Segoe UI Variable Display Light" VerticalAlignment="Top" Height="89" Width="206" HorizontalAlignment="Center" TextWrapping="Wrap" Margin="0,44,0,0" TextAlignment="Center" />
+                        <Image gif:ImageBehavior.AnimatedSource="/icons8-qr-code.gif" Width="50" Height="50" />
+                    </Grid>
+                    <Button x:Name="btn_newentry_next" Content="Next" HorizontalAlignment="Left" Margin="175,350,0,0" VerticalAlignment="Top" Height="25" Width="56" BorderBrush="{x:Null}" Click="btn_newentry_next_Click"/>
+                    <Button x:Name="btn_newentry_back" Content="Back" HorizontalAlignment="Left" Margin="119,350,0,0" VerticalAlignment="Top" Height="25" Width="56" BorderBrush="{x:Null}" Click="btn_newentry_back_Click"/>
                 </Grid>
             </StackPanel>
             <StackPanel DockPanel.Dock="Right" Orientation="Vertical" Background="White" Width="35">

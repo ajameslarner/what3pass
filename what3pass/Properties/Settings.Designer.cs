@@ -8,22 +8,32 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace what3pass.Properties
-{
-
-
+namespace what3pass.Properties {
+    
+    
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "11.0.0.0")]
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase
-    {
-
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.0.3.0")]
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+        
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
-
-        public static Settings Default
-        {
-            get
-            {
+        
+        public static Settings Default {
+            get {
                 return defaultInstance;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=wp3database.database.windows.net;Initial Catalog=W3PDatabase;User ID=" +
+            "w3padmin;Password=********;Connect Timeout=30;Encrypt=True;TrustServerCertificat" +
+            "e=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False")]
+        public string Connection_String {
+            get {
+                return ((string)(this["Connection_String"]));
+            }
+            set {
+                this["Connection_String"] = value;
             }
         }
     }

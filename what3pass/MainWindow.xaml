@@ -4,17 +4,69 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:what3pass"
+        xmlns:gif="http://wpfanimatedgif.codeplex.com"
         mc:Ignorable="d"
         Title="what3pass" Height="450" Width="650" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+    <Window.Resources>
+        <ImageBrush x:Key="ButtonImage"></ImageBrush>
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource ButtonImage}"></Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                    Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" 
+                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" RecognizesAccessKey="True"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Cursor" Value="Hand" />
+                                <Setter Property="Opacity" Value="0.3" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.1" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
     <Grid>
-        <Label x:Name="lbl_title" Content="what3pass" HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="Segoe UI Variable Display Semibold" FontSize="68" Foreground="#FF4EBFFF" Margin="0,5,0,0"/>
-        <Label x:Name="lbl_welcome" Content="Welcome" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="28" FontFamily="Segoe UI Variable Display Light" Margin="0,100,0,0" />
-        <Button x:Name="btn_newentry" Content="New Entry [+]" HorizontalAlignment="Left" Margin="220,173,0,0" VerticalAlignment="Top" Height="33" Width="95" BorderBrush="White" Click="btn_newentry_Click"/>
-        <Button x:Name="btn_viewentries" Content="View Entries" HorizontalAlignment="Left" Margin="335,173,0,0" VerticalAlignment="Top" Height="33" Width="95" BorderBrush="White" Click="btn_viewentries_Click"/>
-        <Button x:Name="btn_about" Content="About" HorizontalAlignment="Center" Margin="0,224,0,0" VerticalAlignment="Top" Height="33" Width="94" BorderBrush="White" Click="btn_about_Click"/>
-        <Button x:Name="btn_lbe" Content="LBE" HorizontalAlignment="Center" Margin="0,262,0,0" VerticalAlignment="Top" Height="33" Width="94" BorderBrush="White" Click="btn_lbe_Click"/>
-        <Button x:Name="btn_ref" Content="Ref" HorizontalAlignment="Center" Margin="0,300,0,0" VerticalAlignment="Top" Height="33" Width="94" BorderBrush="White" Click="btn_ref_Click"/>
-        <Button x:Name="btn_exit" Content="Exit" HorizontalAlignment="Center" Margin="0,338,0,0" VerticalAlignment="Top" Height="21" Width="62" BorderBrush="White" Click="btn_exit_Click"/>
+        <Label x:Name="lbl_title" Content="what3pass" HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="Segoe UI Variable Display Light" FontSize="68" Foreground="#FF989A9C" Margin="0,5,0,0"/>
+        <Label x:Name="lbl_welcome" Content="Account Login" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="28" FontFamily="Segoe UI Variable Display Light" Margin="0,102,0,0" />
+        <Grid x:Name="grd_main_login" HorizontalAlignment="Center" Width="250" Height="225" Margin="0,160,0,0" Visibility="Hidden">
+            <StackPanel>
+                <TextBox x:Name="txt_login_username" GotFocus="txt_login_username_GotFocus" LostFocus="txt_login_username_LostFocus" VerticalContentAlignment="Center" TextWrapping="Wrap" Text="Enter your username..." Width="200" Height="25" BorderBrush="{x:Null}" Background="#FFF1F1F1" Margin="0,25,0,10" Foreground="Gray" FontSize="10" TextAlignment="Center"/>
+                <PasswordBox x:Name="txt_login_password" GotFocus="txt_login_password_GotFocus" LostFocus="txt_login_password_LostFocus" HorizontalAlignment="Center" Password="Password..." VerticalContentAlignment="Center" Width="200" Height="25" BorderBrush="{x:Null}" Background="#FFF1F1F1" Margin="0,0,0,15" Foreground="Gray" FontSize="10" HorizontalContentAlignment="Center"/>
+                <Button x:Name="btn_login" Content="Login" Click="btn_login_Click" Height="26" Width="84" BorderBrush="White"/>
+                <Label Content="If you don't have an account, register here!" FontSize="9" HorizontalContentAlignment="Center" BorderThickness="0,25,0,0"/>
+                <Button x:Name="btn_register" Click="btn_register_Click" Content="Register" Height="27" Width="68" BorderBrush="White" Background="{x:Null}" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
+        <Grid x:Name="grd_main_register" HorizontalAlignment="Center" Width="250" Height="225" Margin="0,160,0,0" Visibility="Hidden">
+            <StackPanel>
+                <TextBox x:Name="txt_register_username" GotFocus="txt_register_username_GotFocus" LostFocus="txt_register_username_LostFocus" VerticalContentAlignment="Center" TextWrapping="Wrap" Text="Enter your username..." Width="200" Height="25" BorderBrush="{x:Null}" Background="#FFF1F1F1" Margin="0,25,0,0" Foreground="Gray" FontSize="10" TextAlignment="Center"/>
+                <PasswordBox x:Name="txt_register_password" GotFocus="txt_register_password_GotFocus" LostFocus="txt_register_password_LostFocus" HorizontalAlignment="Center" Password="Password..." VerticalContentAlignment="Center" Width="200" Height="25" BorderBrush="{x:Null}" Background="#FFF1F1F1" Margin="0,10,0,0" Foreground="Gray" FontSize="10" HorizontalContentAlignment="Center"/>
+                <PasswordBox x:Name="txt_register_passwordconfirm" GotFocus="txt_register_passwordconfirm_GotFocus" LostFocus="txt_register_passwordconfirm_LostFocus" HorizontalAlignment="Center" Password="Password..." VerticalContentAlignment="Center" Width="200" Height="25" BorderBrush="{x:Null}" Background="#FFF1F1F1" Margin="0,10,0,15" Foreground="Gray" FontSize="10" HorizontalContentAlignment="Center"/>
+                <Button x:Name="btn_register_register" Content="Register" Height="27" Width="68" BorderBrush="White" Click="btn_register_register_Click" Background="{x:Null}" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
+        <Grid x:Name="grd_main" HorizontalAlignment="Center" Width="250" Height="250" Margin="0,110,0,0" Visibility="Hidden">
+            <StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,25,0,10">
+                    <Button x:Name="btn_newentry" Content="New Entry [+]" HorizontalAlignment="Left" VerticalAlignment="Top" Height="33" Width="95" BorderBrush="White" Click="btn_newentry_Click" Background="#FFF3F3F3" Margin="0,0,10,0"/>
+                    <Button x:Name="btn_viewentries" Content="View Entries" Height="33" Width="94" BorderBrush="White" Click="btn_viewentries_Click" Background="#FFF3F3F3" Margin="10,0,0,0"/>
+                </StackPanel>
+                <Button x:Name="btn_about" Content="About" HorizontalAlignment="Center" Height="50" Width="180" BorderBrush="White" Click="btn_about_Click" Background="#FFF3F3F3" Margin="0,10,0,0"/>
+                <Button x:Name="btn_lbe" Content="LBE" HorizontalAlignment="Center" Height="50" Width="180" VerticalAlignment="Top" BorderBrush="White" Click="btn_lbe_Click" Background="#FFF3F3F3" Margin="0,10,0,0"/>
+                <Button x:Name="btn_ref" Content="Ref" HorizontalAlignment="Center" Height="50" Width="180" VerticalAlignment="Top" BorderBrush="White" Click="btn_ref_Click" Background="#FFF3F3F3" Margin="0,10,0,0"/>
+            </StackPanel>
+        </Grid>
         <TextBlock x:Name="txt_info" TextAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" Background="White" Height="300" Width="400" Margin="0,168,0,-34" Visibility="Hidden" MouseLeftButtonDown="txt_info_MouseLeftButtonDown"/>
+        <Label x:Name="txt_errormessage" Visibility="Hidden" Content="error message" HorizontalAlignment="Center" Margin="0,163,0,0" VerticalAlignment="Top" Width="500" HorizontalContentAlignment="Center" Foreground="#FFFF3F3F"/>
+        <Image x:Name="gif_loading" gif:ImageBehavior.AnimatedSource="/icons8-loading-circle.gif" Visibility="Hidden" Margin="292,276,292,99" />
+        <Button x:Name="btn_exit" Content="Exit" BorderBrush="White" Click="btn_exit_Click" Background="{x:Null}" Margin="540,10,10,377"/>
     </Grid>
 </Window>
