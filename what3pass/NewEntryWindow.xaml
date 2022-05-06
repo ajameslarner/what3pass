@@ -45,10 +45,22 @@
                     </Grid>
                     <Grid x:Name="grd_newentry_data" HorizontalAlignment="Center" Width="250" Margin="0,26,0,35" Visibility="Hidden">
                         <TextBlock Text="Enter the details for your account you wish to store, otherwise create a new entry and generate a strong password instead!" FontSize="14" FontFamily="Segoe UI Variable Display Light" VerticalAlignment="Top" Height="89" Width="206" HorizontalAlignment="Center" TextWrapping="Wrap" Margin="0,59,0,0" TextAlignment="Center" />
-                        <TextBox x:Name="txt_platform" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0,204,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="188" BorderBrush="{x:Null}" Background="#FFF1F1F1" Height="25"/>
-                        <TextBox x:Name="txt_username" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="31,234,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="26" Width="98" BorderBrush="{x:Null}" Background="#FFF1F1F1"/>
-                        <Button Content="Generate Password" HorizontalAlignment="Left" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="134,234,0,0" VerticalAlignment="Top" Height="26" FontSize="8" Width="85" BorderBrush="{x:Null}" Background="#FFF1F1F1"/>
-                        <TextBox x:Name="txt_password" HorizontalAlignment="Center" VerticalContentAlignment="Center" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="188" BorderBrush="{x:Null}" Background="#FFF1F1F1" Height="25" Margin="0,174,0,0"/>
+                        <TextBox x:Name="txt_username" GotFocus="txt_username_GotFocus" LostFocus="txt_username_LostFocus" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0,189,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="25" Width="180" BorderBrush="{x:Null}" Background="#FFF1F1F1"/>
+                        <PasswordBox x:Name="txt_password" GotFocus="txt_password_GotFocus" LostFocus="txt_password_LostFocus" HorizontalAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Top" Width="180" BorderBrush="{x:Null}" Background="#FFF1F1F1" Height="25" Margin="0,219,0,0"/>
+                        <Button x:Name="btn_generatepass" Click="btn_generatepass_Click" Content="Generate Password" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="0,249,0,0" VerticalAlignment="Top" Height="26" FontSize="8" Width="84" BorderBrush="{x:Null}" Background="#FFF1F1F1"/>
+                        <ComboBox x:Name="txt_platform" GotFocus="txt_platform_GotFocus" LostFocus="txt_platform_LostFocus" IsEditable="True" Text="Platform..." BorderBrush="{x:Null}" Background="#FFF1F1F1" HorizontalAlignment="Center" Margin="0,159,0,0" VerticalAlignment="Top" Width="180" Height="25">
+                            <ComboBoxItem Content="Google"/>
+                            <ComboBoxItem Content="Youtube"/>
+                            <ComboBoxItem Content="Facebook"/>
+                            <ComboBoxItem Content="Instagram"/>
+                            <ComboBoxItem Content="Outlook"/>
+                            <ComboBoxItem Content="Yahoo"/>
+                            <ComboBoxItem Content="Reddit"/>
+                            <ComboBoxItem Content="LinkedIn"/>
+                            <ComboBoxItem Content="Twitter"/>
+                            <ComboBoxItem Content="Github"/>
+                        </ComboBox>
+                        <Label x:Name="lbl_genpassword" Visibility="Hidden" Content="gen_password" HorizontalAlignment="Center" Margin="0,280,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" Height="27" Width="232" FontSize="10" FontFamily="Segoe UI Variable Display" Foreground="Green"/>
                     </Grid>
                     <Grid x:Name="grd_newentry_map" HorizontalAlignment="Center" Width="250" Margin="0,26,0,35" Visibility="Hidden">
                         <TextBlock Text="Navigate to your chosen position and enable the grid to choose the safe-zones where your data can be accessed from." FontSize="14" FontFamily="Segoe UI Variable Display Light" VerticalAlignment="Top" Height="89" Width="206" HorizontalAlignment="Center" TextWrapping="Wrap" Margin="0,59,0,0" TextAlignment="Center" />
@@ -57,6 +69,11 @@
                     <Grid x:Name="grd_newentry_processing" HorizontalAlignment="Center" Width="250" Margin="0,26,0,35" Visibility="Hidden">
                         <TextBlock Text="Processing a complex mathematical equation, please wait..." FontSize="18" FontFamily="Segoe UI Variable Display Light" VerticalAlignment="Top" Height="89" Width="206" HorizontalAlignment="Center" TextWrapping="Wrap" Margin="0,44,0,0" TextAlignment="Center" />
                         <Image gif:ImageBehavior.AnimatedSource="/icons8-qr-code.gif" Width="50" Height="50" />
+                    </Grid>
+                    <Grid x:Name="grd_newentry_processed" HorizontalAlignment="Center" Width="250" Margin="0,26,0,35" Visibility="Hidden">
+                        <TextBlock Text="All done! Password securely stored..." FontSize="18" FontFamily="Segoe UI Variable Display Light" VerticalAlignment="Top" Height="89" Width="206" HorizontalAlignment="Center" TextWrapping="Wrap" Margin="0,44,0,0" TextAlignment="Center" />
+                        <Image gif:ImageBehavior.AnimatedSource="/icons8-ok.gif" gif:ImageBehavior.AnimationSpeedRatio="0.75" Width="50" Height="50" gif:ImageBehavior.RepeatBehavior="2x" />
+                        <Button x:Name="btn_newentry_process" Visibility="Hidden" Click="btn_newentry_process_Click" Content="Process" HorizontalAlignment="Center" VerticalAlignment="Top" Height="25" Width="56" BorderBrush="{x:Null}" Margin="0,268,0,0" />
                     </Grid>
                     <Button x:Name="btn_newentry_next" Content="Next" HorizontalAlignment="Left" Margin="175,350,0,0" VerticalAlignment="Top" Height="25" Width="56" BorderBrush="{x:Null}" Click="btn_newentry_next_Click"/>
                     <Button x:Name="btn_newentry_back" Content="Back" HorizontalAlignment="Left" Margin="119,350,0,0" VerticalAlignment="Top" Height="25" Width="56" BorderBrush="{x:Null}" Click="btn_newentry_back_Click"/>

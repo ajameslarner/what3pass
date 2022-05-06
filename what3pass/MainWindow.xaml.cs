@@ -432,5 +432,14 @@ namespace what3pass
                 btn_register_register.Visibility = Visibility.Visible;
             }
         }
+
+        private void btn_register_back_Click(object sender, RoutedEventArgs e)
+        {
+            grd_main_register.Visibility = Visibility.Hidden;
+            grd_main_login.Visibility = Visibility.Visible;
+            txt_errormessage.Visibility = Visibility.Hidden;
+
+            lbl_welcome.Content = "Account Login";
+        }
     }
 }

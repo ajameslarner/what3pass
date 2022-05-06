@@ -23,6 +23,12 @@ using GMap.NET.WindowsForms.ToolTips;
 using System.Diagnostics;
 using what3words.dotnet.wrapper;
 using what3words.dotnet.wrapper.models;
+using System.Data.SqlClient;
+using System.Configuration;
+using System.Security.Cryptography;
+using System.IO;
+using System.Threading;
+using System.Web.Security;
 
 namespace what3pass
 {
@@ -36,12 +42,14 @@ namespace what3pass
         private double _longitude;
         private GeoCoordinateWatcher _geoCoordinateWatcher;
         private GeoCoordinate _geoCoordinate;
-        private Timer _OnTickEvent;
+        private System.Timers.Timer _OnTickEvent;
         private bool _gridActive;
         private string _mapProvider;
         private PointLatLng _localLatLong;
         private What3WordsV3 _what3wordsAPIWrapper;
         private string _currentEntryStage;
+
+        private string _connectionString;
 
         public NewEntryWindow()
         {
@@ -72,11 +80,13 @@ namespace what3pass
             _what3wordsAPIWrapper = new What3WordsV3("E3ZZ4IN2");
 
             //SetOnTickEvent(500);
+
+            _connectionString = ConfigurationManager.ConnectionStrings["W3PDB"].ConnectionString;
         }
 
         private void SetOnTickEvent(int interval)
         {
-            _OnTickEvent = new Timer(interval);
+            _OnTickEvent = new System.Timers.Timer(interval);
             _OnTickEvent.Elapsed += OnTimedEvent;
             _OnTickEvent.AutoReset = true;
             _OnTickEvent.Enabled = true;
@@ -93,7 +103,7 @@ namespace what3pass
             mapView.MinZoom = 2;
             mapView.MaxZoom = 21;
             mapView.Zoom = 2;
-            mapView.ShowCenter = true;
+            mapView.ShowCenter = false;
             mapView.MouseWheelZoomType = MouseWheelZoomType.MousePositionAndCenter;
             mapView.DragButton = MouseButton.Left;
             mapView.CanDragMap = true;
@@ -127,6 +137,8 @@ namespace what3pass
                     btn_gridoverlay.IsEnabled = true;
                     btn_mapsquare.IsEnabled = true;
                     btn_mapcircle.IsEnabled = true;
+                    mapView.Position = new PointLatLng(_latitude, _longitude);
+                    mapView.Zoom = 21;
                     break;
                 case "Map":
                     grd_newentry_begin.Visibility = Visibility.Hidden;
@@ -149,12 +161,118 @@ namespace what3pass
                     btn_mapcircle.IsEnabled = false;
                     mapView.CanDragMap = false;
                     grd_gridoverlay.IsEnabled = false;
+
+                    ExecuteW3PEncryptionProcess();
                     break;
                 case "Processing":
-                    
-                    //Start Encryption
                     break;
             }
+        }
+
+        private async void ExecuteW3PEncryptionProcess()
+        {
+            byte[] encrypted = { (byte)0, (byte)0 };
+
+            List<UserEntry> dataOut = new List<UserEntry>();
+
+            string[] W3PHashes = txtbox_gridwords.Text.Split('$');
+            for(int i = 1; i < W3PHashes.Length; i++)
+            {
+                var preProcessBytes = Encoding.ASCII.GetBytes(W3PHashes[i].Trim());
+
+                List<byte> processingBytes = preProcessBytes.ToList();
+
+                while (processingBytes.Count < 32)
+                {
+                    //Padding
+                    processingBytes.Insert(0,(byte)3);
+                }
+
+                byte[] W3PKey = processingBytes.ToArray();
+
+                using (Aes myAes = Aes.Create())
+                {
+                    myAes.Key = W3PKey;
+                    encrypted = EncryptStringToBytes_Aes(txt_password.Password, myAes.Key, myAes.IV);
+                    string chiperText = Convert.ToBase64String(encrypted);
+                    SHA512 shaM = new SHA512Managed();
+
+                    dataOut.Add(new UserEntry(txt_platform.Text, txt_username.Text, chiperText));
+                }
+            }
+            await InsertUserEntryInto_DB(dataOut, MainWindow.s_currentUser.Id);
+        }
+
+        static byte[] EncryptStringToBytes_Aes(string plainText, byte[] Key, byte[] IV)
+        {
+            byte[] encrypted;
+            using (Aes aesAlg = Aes.Create())
+            {
+                aesAlg.Key = Key;
+                aesAlg.IV = IV;
+
+                ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
+                using (MemoryStream msEncrypt = new MemoryStream())
+                {
+                    using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                    {
+                        using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
+                        {
+                            swEncrypt.Write(plainText);
+                        }
+                        encrypted = msEncrypt.ToArray();
+                    }
+                }
+            }
+            return encrypted;
+        }
+
+        static string DecryptStringFromBytes_Aes(byte[] cipherText, byte[] Key, byte[] IV)
+        {
+            string plaintext = null;
+
+            using (Aes aesAlg = Aes.Create())
+            {
+                aesAlg.Key = Key;
+                aesAlg.IV = IV;
+
+                ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+                using (MemoryStream msDecrypt = new MemoryStream(cipherText))
+                {
+                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                    {
+                        using (StreamReader srDecrypt = new StreamReader(csDecrypt))
+                        {
+                            plaintext = srDecrypt.ReadToEnd();
+                        }
+                    }
+                }
+            }
+
+            return plaintext;
+        }
+
+        private async Task InsertUserEntryInto_DB(List<UserEntry> entryData, int userId)
+        {
+            using (var sqlCon = new SqlConnection(_connectionString))
+            using (var cmd = new SqlCommand(@"INSERT INTO[UserEntries](platform, username, password, user_id) VALUES(@Platform, @Username, @Password, @User_id)", sqlCon))
+            {
+                cmd.Parameters.Add(new SqlParameter("Platform", platform));
+                cmd.Parameters.Add(new SqlParameter("Username", username));
+                cmd.Parameters.Add(new SqlParameter("Password", password));
+                cmd.Parameters.Add(new SqlParameter("User_id", userId));
+
+                await sqlCon.OpenAsync();
+                await cmd.ExecuteNonQueryAsync();
+
+                sqlCon.Close();
+            }
+
+            grd_newentry_begin.Visibility = Visibility.Hidden;
+            grd_newentry_data.Visibility = Visibility.Hidden;
+            grd_newentry_map.Visibility = Visibility.Hidden;
+            grd_newentry_processing.Visibility = Visibility.Hidden;
+            grd_newentry_processed.Visibility = Visibility.Visible;
         }
 
         private void btn_newentry_back_Click(object sender, RoutedEventArgs e)
@@ -240,7 +358,7 @@ namespace what3pass
             {
                 indexResult = await _what3wordsAPIWrapper.ConvertTo3WA(ShiftCoordinates(4.0, _localLatLong.Lat, _localLatLong.Lng, 4.0)).RequestAsync();
             }
-            txtbox_gridwords.Text = txtbox_gridwords.Text + indexResult.Data.Words + Environment.NewLine;
+            txtbox_gridwords.Text = $"{txtbox_gridwords.Text}${indexResult.Data.Words}";
         }
 
         private async void RemoveWhat3WordsFromPosAsync()
@@ -654,7 +772,7 @@ namespace what3pass
         {
             if (btn_00 != null)
             {
-                txtbox_gridwords.Text = "";
+                //txtbox_gridwords.Text = "";
                 btn_00.Background = Brushes.LightBlue;
                 btn_01.Background = Brushes.LightBlue;
                 btn_02.Background = Brushes.LightBlue;
@@ -766,6 +884,74 @@ namespace what3pass
         private void txt_username_TextChanged(object sender, TextChangedEventArgs e)
         {
 
+        }
+
+        private void btn_generatepass_Click(object sender, RoutedEventArgs e)
+        {
+            string genPassword = Membership.GeneratePassword(15, 2);
+            txt_password.Password = genPassword;
+            lbl_genpassword.Visibility = Visibility.Visible;
+            Clipboard.SetText(genPassword);
+            lbl_genpassword.Content = "Copied to clipboard!";
+        }
+
+        private void txt_platform_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (txt_platform.Text == "Platform...")
+            {
+                txt_platform.Text = "";
+                txt_platform.Foreground = Brushes.Black;
+            }
+        }
+
+        private void txt_platform_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txt_platform.Text))
+            {
+                txt_platform.Text = "Platform...";
+                txt_platform.Foreground = Brushes.Gray;
+            }
+        }
+
+        private void txt_username_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (txt_username.Text == "Username...")
+            {
+                txt_username.Text = "";
+                txt_username.Foreground = Brushes.Black;
+            }
+        }
+
+        private void txt_username_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txt_username.Text))
+            {
+                txt_username.Text = "Username...";
+                txt_username.Foreground = Brushes.Gray;
+            }
+        }
+
+        private void txt_password_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (txt_password.Password == "Password...")
+            {
+                txt_password.Password = "";
+                txt_password.Foreground = Brushes.Black;
+            }
+        }
+
+        private void txt_password_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txt_password.Password))
+            {
+                txt_password.Password = "Password...";
+                txt_password.Foreground = Brushes.Gray;
+            }
+        }
+
+        private async void btn_newentry_process_Click(object sender, RoutedEventArgs e)
+        {
+            //await ExecuteW3PEncryptionProcess();
         }
     }
 }

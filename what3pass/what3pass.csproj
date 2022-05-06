@@ -95,6 +95,7 @@
     </Compile>
     <Compile Include="Entry.cs" />
     <Compile Include="User.cs" />
+    <Compile Include="UserEntry.cs" />
     <Compile Include="ViewEntryWindow.xaml.cs">
       <DependentUpon>ViewEntryWindow.xaml</DependentUpon>
     </Compile>
@@ -208,6 +209,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="icons8-loading-circle-24.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons8-check-circle.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons8-ok.gif" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
