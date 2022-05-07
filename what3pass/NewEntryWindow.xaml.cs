@@ -254,18 +254,21 @@ namespace what3pass
 
         private async Task InsertUserEntryInto_DB(List<UserEntry> entryData, int userId)
         {
-            using (var sqlCon = new SqlConnection(_connectionString))
-            using (var cmd = new SqlCommand(@"INSERT INTO[UserEntries](platform, username, password, user_id) VALUES(@Platform, @Username, @Password, @User_id)", sqlCon))
+            foreach (var userEntry in entryData)
             {
-                cmd.Parameters.Add(new SqlParameter("Platform", platform));
-                cmd.Parameters.Add(new SqlParameter("Username", username));
-                cmd.Parameters.Add(new SqlParameter("Password", password));
-                cmd.Parameters.Add(new SqlParameter("User_id", userId));
+                using (var sqlCon = new SqlConnection(_connectionString))
+                using (var cmd = new SqlCommand(@"INSERT INTO[UserEntries](platform, username, password, user_id) VALUES(@Platform, @Username, @Password, @User_id)", sqlCon))
+                {
+                    cmd.Parameters.Add(new SqlParameter("Platform", userEntry.Platform));
+                    cmd.Parameters.Add(new SqlParameter("Username", userEntry.Username));
+                    cmd.Parameters.Add(new SqlParameter("Password", userEntry.Password));
+                    cmd.Parameters.Add(new SqlParameter("User_id", userId));
 
-                await sqlCon.OpenAsync();
-                await cmd.ExecuteNonQueryAsync();
+                    await sqlCon.OpenAsync();
+                    await cmd.ExecuteNonQueryAsync();
 
-                sqlCon.Close();
+                    sqlCon.Close();
+                }
             }
 
             grd_newentry_begin.Visibility = Visibility.Hidden;

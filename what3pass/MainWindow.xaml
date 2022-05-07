@@ -40,7 +40,7 @@
                 <GradientStop Color="#FF6DD3FF" Offset="1"/>
             </LinearGradientBrush>
         </Grid.Background>
-        <Label x:Name="lbl_title" Content="what3pass" HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="Segoe UI Variable Display Light" FontSize="68" Foreground="#FF3A7FAB" Margin="0,5,0,0"/>
+        <Label x:Name="lbl_title" Content="What3Pass" HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="Segoe UI Variable Display Light" FontSize="68" Foreground="#FF3A7FAB" Margin="0,5,0,0"/>
         <Label x:Name="lbl_welcome" Content="Account Login" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="28" FontFamily="Segoe UI Variable Display Light" Margin="0,102,0,0" />
         <Grid x:Name="grd_main_login" HorizontalAlignment="Center" Width="250" Height="225" Margin="0,160,0,0" Visibility="Hidden">
             <StackPanel>
@@ -63,12 +63,12 @@
         <Grid x:Name="grd_main" HorizontalAlignment="Center" Width="250" Height="250" Margin="0,110,0,0" Visibility="Hidden">
             <StackPanel Height="240" VerticalAlignment="Top" Margin="0,10,0,0">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,25,0,10">
-                    <Button x:Name="btn_newentry" Content="New Entry [+]" HorizontalAlignment="Left" VerticalAlignment="Top" Height="33" Width="95" BorderBrush="{x:Null}" Click="btn_newentry_Click" Background="{x:Null}" Margin="0,0,10,0" Foreground="#FF3A7FAB"/>
-                    <Button x:Name="btn_viewentries" Content="View Entries" Height="33" Width="94" BorderBrush="{x:Null}" Click="btn_viewentries_Click" Background="{x:Null}" Margin="10,0,0,0" Foreground="#FF3A7FAB"/>
+                    <Button x:Name="btn_newentry" Content="New Entry [+]" HorizontalAlignment="Left" VerticalAlignment="Top" Height="33" Width="95" BorderBrush="{x:Null}" Click="btn_newentry_Click" Margin="0,0,10,0" Foreground="#FF3A7FAB" Background="White"/>
+                    <Button x:Name="btn_viewentries" Content="View Entries" Height="33" Width="94" BorderBrush="{x:Null}" Click="btn_viewentries_Click" Background="White" Margin="10,0,0,0" Foreground="#FF3A7FAB"/>
                 </StackPanel>
-                <Button x:Name="btn_about" Content="About" HorizontalAlignment="Center" Height="50" Width="180" BorderBrush="{x:Null}" Click="btn_about_Click" Background="{x:Null}" Margin="0,10,0,0" Foreground="#FF3A7FAB"/>
-                <Button x:Name="btn_lbe" Content="LBE" HorizontalAlignment="Center" Height="50" Width="180" VerticalAlignment="Top" BorderBrush="{x:Null}" Click="btn_lbe_Click" Background="{x:Null}" Margin="0,10,0,0" Foreground="#FF3A7FAB"/>
-                <Button x:Name="btn_ref" Content="Ref" HorizontalAlignment="Center" Height="50" Width="180" VerticalAlignment="Top" BorderBrush="{x:Null}" Click="btn_ref_Click" Background="{x:Null}" Margin="0,10,0,0" Foreground="#FF3A7FAB"/>
+                <Button x:Name="btn_about" Content="About" HorizontalAlignment="Center" Height="30" Width="85" BorderBrush="{x:Null}" Click="btn_about_Click" Background="White" Margin="0,10,0,0" Foreground="#FF3A7FAB"/>
+                <Button x:Name="btn_lbe" Content="LBE" HorizontalAlignment="Center" Height="30" Width="85" VerticalAlignment="Top" BorderBrush="{x:Null}" Click="btn_lbe_Click" Background="White" Margin="0,10,0,0" Foreground="#FF3A7FAB"/>
+                <Button x:Name="btn_ref" Content="Ref" HorizontalAlignment="Center" Height="30" Width="85" VerticalAlignment="Top" BorderBrush="{x:Null}" Click="btn_ref_Click" Background="White" Margin="0,10,0,0" Foreground="#FF3A7FAB"/>
             </StackPanel>
         </Grid>
         <TextBlock x:Name="txt_info" TextAlignment="Center" HorizontalAlignment="Center" TextWrapping="Wrap" Background="White" Height="300" Width="400" Margin="0,168,0,-34" Visibility="Hidden" MouseLeftButtonDown="txt_info_MouseLeftButtonDown"/>
