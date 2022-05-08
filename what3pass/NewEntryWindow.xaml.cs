@@ -189,27 +189,24 @@ namespace what3pass
                 }
 
                 byte[] W3PKey = processingBytes.ToArray();
+       
+                encrypted = EncryptStringToBytes_Aes(txt_password.Password, W3PKey);
+                string chiperText = Convert.ToBase64String(encrypted);
 
-                using (Aes myAes = Aes.Create())
-                {
-                    myAes.Key = W3PKey;
-                    encrypted = EncryptStringToBytes_Aes(txt_password.Password, myAes.Key, myAes.IV);
-                    string chiperText = Convert.ToBase64String(encrypted);
-                    SHA512 shaM = new SHA512Managed();
+                dataOut.Add(new UserEntry(txt_platform.Text, txt_username.Text, chiperText));
 
-                    dataOut.Add(new UserEntry(txt_platform.Text, txt_username.Text, chiperText));
-                }
             }
             await InsertUserEntryInto_DB(dataOut, MainWindow.s_currentUser.Id);
         }
 
-        static byte[] EncryptStringToBytes_Aes(string plainText, byte[] Key, byte[] IV)
+        static byte[] EncryptStringToBytes_Aes(string plainText, byte[] Key)
         {
             byte[] encrypted;
             using (Aes aesAlg = Aes.Create())
             {
                 aesAlg.Key = Key;
-                aesAlg.IV = IV;
+
+                MainWindow.GlobalIVKey = aesAlg.IV;
 
                 ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
                 using (MemoryStream msEncrypt = new MemoryStream())
@@ -225,31 +222,6 @@ namespace what3pass
                 }
             }
             return encrypted;
-        }
-
-        static string DecryptStringFromBytes_Aes(byte[] cipherText, byte[] Key, byte[] IV)
-        {
-            string plaintext = null;
-
-            using (Aes aesAlg = Aes.Create())
-            {
-                aesAlg.Key = Key;
-                aesAlg.IV = IV;
-
-                ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
-                using (MemoryStream msDecrypt = new MemoryStream(cipherText))
-                {
-                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
-                    {
-                        using (StreamReader srDecrypt = new StreamReader(csDecrypt))
-                        {
-                            plaintext = srDecrypt.ReadToEnd();
-                        }
-                    }
-                }
-            }
-
-            return plaintext;
         }
 
         private async Task InsertUserEntryInto_DB(List<UserEntry> entryData, int userId)

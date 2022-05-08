@@ -26,6 +26,8 @@ namespace what3pass
     {
         private SqlConnection _connection;
         public static User s_currentUser;
+
+        public static byte[] GlobalIVKey;
         public MainWindow()
         {
             InitializeComponent();
