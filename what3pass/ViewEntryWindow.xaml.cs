@@ -48,6 +48,10 @@ namespace what3pass
         private GeoCoordinateWatcher _geoCoordinateWatcher;
         private GeoCoordinate _geoCoordinate;
 
+        private string _what3wordsGridPosition;
+
+        private Timer _OnTickEvent;
+
         public ViewEntryWindow()
         {
             InitializeComponent();
@@ -65,12 +69,13 @@ namespace what3pass
 
             _geoCoordinate = new GeoCoordinate();
 
-            _geoCoordinateWatcher.PositionChanged += (sender, e) =>
+            _geoCoordinateWatcher.PositionChanged += async (sender, e) =>
             {
                 _geoCoordinate.HorizontalAccuracy = 10.0;
                 _geoCoordinate = e.Position.Location;
                 _latitude = _geoCoordinate.Latitude;
                 _longitude = _geoCoordinate.Longitude;
+                lbl_what3words_position.Content = $@"\\\{await GetWhat3WordsFromPosAsync(_latitude, _longitude)}";
             };
         }
 
@@ -151,7 +156,7 @@ namespace what3pass
                         BorderBrush = Brushes.LightGray,
                         BorderThickness = new Thickness(1),
                         Width = 200,
-                        Height = 150,
+                        Height = 180,
                         Margin = new Thickness(5, 5, 5, 5)
                     };
                     pnl_parentdataviewer.Children.Add(dataView);
@@ -163,8 +168,9 @@ namespace what3pass
                     {
                         Name = $"lbl_platform_{item.Key}_entry",
                         HorizontalContentAlignment = HorizontalAlignment.Center,
-                        VerticalAlignment = VerticalAlignment.Center,
-                        Content = item.Key
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        FontSize = 16,
+                        Content = "Platform: "+item.Key
                     };
                     stackPanel.Children.Add(platformLabel);
 
@@ -172,15 +178,20 @@ namespace what3pass
                     {
                         Name = $"lbl_username_{item.Key}_entry",
                         Margin = new Thickness(10, 10, 10, 10),
-                        Content = userDataItem
+                        Content = "Username: "+userDataItem,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        HorizontalContentAlignment = HorizontalAlignment.Center
                     };
                     stackPanel.Children.Add(usernameLabel);
 
                     Label safezonesLabel = new Label
                     {
-                        Name = $"lbl3_safezones_{item.Key}_entry",
+                        Name = $"lbl_safezones_{item.Key}_entry",
                         Margin = new Thickness(10, 10, 10, 10),
-                        Content = $"Safe-zones available: {vs.Length}"
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        HorizontalContentAlignment= HorizontalAlignment.Center,
+                        Content = $"Safe-zones available: {vs.Length}",
+                        Foreground = Brushes.Green
                     };
                     stackPanel.Children.Add(safezonesLabel);
 
@@ -188,12 +199,15 @@ namespace what3pass
                     {
                         Name = $"btn_unlock_{item.Key}_entry",
                         Height = 25,
-                        Width = 50,
+                        Width = 135,
                         Margin = new Thickness(25, 0, 25, 25),
-                        Content = "Uncover"
+                        Content = "******"
                     };
 
                     uncoverButton.Click += new RoutedEventHandler(btn_unlock_entry_Click);
+                    uncoverButton.MouseEnter += new MouseEventHandler(btn_unlock_entry_MouseEnter);
+                    uncoverButton.MouseLeave += new MouseEventHandler(btn_unlock_entry_MouseLeave);
+
                     stackPanel.Children.Add(uncoverButton);
                 }
 
@@ -206,9 +220,54 @@ namespace what3pass
             }
         }
 
+        private void btn_unlock_entry_MouseEnter(object sender, MouseEventArgs e)
+        {
+            if (((Button)sender).Content == "******")
+            {
+                ((Button)sender).Content = "Reveal";
+                ((Button)sender).Foreground = Brushes.Black;
+            }
+        }
+
+        private void btn_unlock_entry_MouseLeave(object sender, MouseEventArgs e)
+        {
+            if (((Button)sender).Content == "Reveal")
+            {
+                ((Button)sender).Content = "******";
+                ((Button)sender).Foreground = Brushes.Gray;
+            }
+        }
+
+        private void SetOnTickEvent(int interval)
+        {
+            _OnTickEvent = new Timer(interval);
+            _OnTickEvent.Elapsed += OnTimedEvent;
+            _OnTickEvent.AutoReset = false;
+            _OnTickEvent.Enabled = true;
+        }
+
+        private void OnTimedEvent(Object source, ElapsedEventArgs e)
+        {
+            lbl_clipboard_copy.Dispatcher.Invoke(new Action(() =>
+            {
+                lbl_clipboard_copy.Visibility = Visibility.Hidden;
+            }));
+        }
+
         private async void btn_unlock_entry_Click(object sender, RoutedEventArgs e)
         {
-           string keyFind = ((Button)sender).Name.Split('_')[2];
+            if (((Button)sender).Content != "Reveal")
+            {
+                Clipboard.SetText((string)((Button)sender).Content);
+                lbl_clipboard_copy.Visibility = Visibility.Visible;
+                SetOnTickEvent(3000);
+                return;
+            }
+
+            gif_loading.Visibility = Visibility.Visible;
+            grd_viewentrymain.IsEnabled = false;
+
+            string keyFind = ((Button)sender).Name.Split('_')[2];
 
             foreach (var item in _EntryData)
             {
@@ -230,18 +289,18 @@ namespace what3pass
                             {
                                 byte[] cipherText = Convert.FromBase64String(passDataItem[i]);
 
-                                string w3w = await GetWhat3WordsFromPosAsync();
+                                string word = await GetWhat3WordsFromPosAsync(_latitude,_longitude);
 
-                                var preProcessBytes = Encoding.ASCII.GetBytes(w3w.Trim());
+                                var preProcessBytes = Encoding.ASCII.GetBytes(word.Trim());
 
                                 List<byte> processingBytes = preProcessBytes.ToList();
 
-                                while(processingBytes.Count > 32)
+                                while (processingBytes.Count > 32)
                                 {
                                     processingBytes.RemoveAt(0);
                                 }
 
-                                while (processingBytes.Count < 32 )
+                                while (processingBytes.Count < 32)
                                 {
                                     //Padding
                                     processingBytes.Insert(0, (byte)3);
@@ -249,13 +308,63 @@ namespace what3pass
 
                                 byte[] W3PKey = processingBytes.ToArray();
 
-                                string plaintext = DecryptStringFromBytes_Aes(cipherText, W3PKey);
-                                Console.WriteLine(plaintext);
+                                string plaintext = "Empty";
+
+                                try
+                                {
+                                    plaintext = DecryptStringFromBytes_Aes(cipherText, W3PKey);
+                                    Console.WriteLine("Success!");
+                                    ((Button)sender).Content = plaintext;
+                                    ((Button)sender).Foreground = Brushes.Black;
+                                    ((Button)sender).Opacity = 0.8;
+                                    ((Button)sender).Background = Brushes.LightGreen;
+                                    ((Button)sender).VerticalContentAlignment = VerticalAlignment.Center;
+                                    ((Button)sender).HorizontalContentAlignment = HorizontalAlignment.Center;
+                                    gif_loading.Visibility = Visibility.Hidden;
+                                    grd_viewentrymain.IsEnabled = true;
+                                    Clipboard.SetText((string)((Button)sender).Content);
+                                    lbl_clipboard_copy.Visibility = Visibility.Visible;
+                                    SetOnTickEvent(3000);
+
+                                    return;
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine(ex.Message);
+                                }
                             }
                         }
                     }
+                    gif_loading.Visibility = Visibility.Hidden;
+                    grd_viewentrymain.IsEnabled = true;
                 }
             }
+        }
+
+        private void IncrementMapPosition(double meters)
+        {
+            // number of km per degree = ~111km (111.32 in google maps, but range varies between 110.567km at the equator and 111.699km at the poles)
+            // 1km in degree = 1 / 111.32km = 0.0089
+            // 1m in degree = 0.0089 / 1000 = 0.0000089
+            double coef = meters * 0.0000089;
+
+            _localLatLong.Lat = _localLatLong.Lat + coef;
+
+            // pi / 180 = 0.018
+            _localLatLong.Lng = _localLatLong.Lng + coef / Math.Cos(_localLatLong.Lat * 0.018);
+        }
+
+        private void DecrementMapPosition(double meters)
+        {
+            // number of km per degree = ~111km (111.32 in google maps, but range varies between 110.567km at the equator and 111.699km at the poles)
+            // 1km in degree = 1 / 111.32km = 0.0089
+            // 1m in degree = 0.0089 / 1000 = 0.0000089
+            double coef = meters * 0.0000089;
+
+            _localLatLong.Lat = _localLatLong.Lat - coef;
+
+            // pi / 180 = 0.018
+            _localLatLong.Lng = _localLatLong.Lng - coef / Math.Cos(_localLatLong.Lat * 0.018);
         }
 
         static string DecryptStringFromBytes_Aes(byte[] cipherText, byte[] Key)
@@ -265,7 +374,9 @@ namespace what3pass
             using (Aes aesAlg = Aes.Create())
             {
                 aesAlg.Key = Key;
-                aesAlg.IV = MainWindow.GlobalIVKey;
+                Byte[] IVKey = Encoding.ASCII.GetBytes("COLLABORATIONISM");
+                aesAlg.IV = IVKey;
+                aesAlg.Mode = CipherMode.CBC;
 
                 ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
                 using (MemoryStream msDecrypt = new MemoryStream(cipherText))
@@ -283,11 +394,18 @@ namespace what3pass
             return plaintext;
         }
 
-        private async Task<string> GetWhat3WordsFromPosAsync()
+        private async Task<string> GetWhat3WordsFromPosAsync(double lat, double lng)
         {
-            var indexResult = await _what3wordsAPIWrapper.ConvertTo3WA(new Coordinates(_localLatLong.Lat, _localLatLong.Lng)).RequestAsync();
+            var indexResult = await _what3wordsAPIWrapper.ConvertTo3WA(new Coordinates(lat, lng)).RequestAsync();
 
             return indexResult.Data.Words;
+        }
+
+        private async void GetWhat3WordsFromPosAsync()
+        {
+            var indexResult = await _what3wordsAPIWrapper.ConvertTo3WA(new Coordinates(_latitude, _longitude)).RequestAsync();
+
+            lbl_what3words_position.Content = indexResult.Data.Words;
         }
     }
 }

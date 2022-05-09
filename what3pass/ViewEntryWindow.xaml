@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:what3pass"
         xmlns:gif="http://wpfanimatedgif.codeplex.com"
         mc:Ignorable="d"
-        Title="What3pass - Safe, Secure Location-based Password Encryption" Height="535" Width="905" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize">
+        Title="What3pass - Safe, Secure Location-based Password Encryption" Height="578" Width="905" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize">
     <Window.Resources>
         <ImageBrush x:Key="ButtonImage"></ImageBrush>
         <Style TargetType="Button">
@@ -34,18 +34,22 @@
             </Setter>
         </Style>
     </Window.Resources>
-    <Grid>
-        <Image x:Name="gif_loading" gif:ImageBehavior.AnimatedSource="/icons8-loading-circle.gif" Visibility="Hidden" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,100,0,0" Opacity="0.3" Width="200" Height="200"/>
+    <Grid x:Name="grd_viewentrymain" Margin="0,0,0,37">
+        <Image x:Name="gif_loading" gif:ImageBehavior.AnimatedSource="/icons8-loading-circle.gif" Panel.ZIndex="999" Visibility="Hidden" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,100,0,0" Opacity="0.8" Width="100" Height="100"/>
         <DockPanel LastChildFill = "True" Loaded="DockPanel_Loaded">
-            <StackPanel Width="842">
+            <StackPanel Width="842" Height="542">
                 <Label Content="What3Pass" FontSize="58" FontFamily="Segoe UI Variable Display Light" Height="100" Width="350" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                <StackPanel Height="115">
+                    <TextBlock TextWrapping="Wrap" Width="740" Height="59" TextAlignment="Center"><Run Text="To "/><Run Text="reveal your password your device must be within the designated &quot;safe-zone&quot; allocated during the encryption process."/><LineBreak/><Run/><LineBreak/><Run Text="Current What3Words Grid Position" TextDecorations="Underline"/></TextBlock>
+                    <Label x:Name="lbl_what3words_position" Content="\\\what3words" Height="40" Width="650" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="#FFE11F26" FontWeight="Bold" FontSize="18"/>
+                </StackPanel>
                 <GridSplitter Height="10" Width="842" />
-                <ScrollViewer x:Name="scrl_entries" VerticalScrollBarVisibility="Hidden" Height="400">
-                    <WrapPanel x:Name="pnl_parentdataviewer">
-                        
-                    </WrapPanel>
+                <ScrollViewer x:Name="scrl_entries" VerticalScrollBarVisibility="Hidden" Height="249">
+                    <WrapPanel x:Name="pnl_parentdataviewer"/>
                 </ScrollViewer>
-            </StackPanel> 
+                <GridSplitter Height="10" Width="842" />
+                <Label x:Name="lbl_clipboard_copy" Visibility="Hidden" Content="Copied to clipboard!" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="#FF158F00"/>
+            </StackPanel>
         </DockPanel>
     </Grid>
 </Window>

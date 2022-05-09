@@ -79,21 +79,7 @@ namespace what3pass
 
             _what3wordsAPIWrapper = new What3WordsV3("E3ZZ4IN2");
 
-            //SetOnTickEvent(500);
-
             _connectionString = ConfigurationManager.ConnectionStrings["W3PDB"].ConnectionString;
-        }
-
-        private void SetOnTickEvent(int interval)
-        {
-            _OnTickEvent = new System.Timers.Timer(interval);
-            _OnTickEvent.Elapsed += OnTimedEvent;
-            _OnTickEvent.AutoReset = true;
-            _OnTickEvent.Enabled = true;
-        }
-        private void OnTimedEvent(Object source, ElapsedEventArgs e)
-        {
-            
         }
 
         private void mapView_Loaded(object sender, RoutedEventArgs e)
@@ -205,8 +191,9 @@ namespace what3pass
             using (Aes aesAlg = Aes.Create())
             {
                 aesAlg.Key = Key;
-
-                MainWindow.GlobalIVKey = aesAlg.IV;
+                Byte[] IVKey = Encoding.ASCII.GetBytes("COLLABORATIONISM");
+                aesAlg.IV = IVKey;
+                aesAlg.Mode = CipherMode.CBC;
 
                 ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
                 using (MemoryStream msEncrypt = new MemoryStream())
@@ -826,19 +813,9 @@ namespace what3pass
             
         }
 
-        private void btn_mapsquare_Click(object sender, RoutedEventArgs e)
+        private async void btn_mapsquare_Click(object sender, RoutedEventArgs e)
         {
-            btn_11.Background = Brushes.Red;
-            btn_12.Background = Brushes.Red;
-            btn_13.Background = Brushes.Red;
 
-            btn_21.Background = Brushes.Red;
-            btn_22.Background = Brushes.Red;
-            btn_23.Background = Brushes.Red;
-
-            btn_31.Background = Brushes.Red;
-            btn_32.Background = Brushes.Red;
-            btn_33.Background = Brushes.Red;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
