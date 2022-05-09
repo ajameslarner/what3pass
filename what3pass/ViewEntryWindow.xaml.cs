@@ -260,6 +260,8 @@ namespace what3pass
             {
                 Clipboard.SetText((string)((Button)sender).Content);
                 lbl_clipboard_copy.Visibility = Visibility.Visible;
+                lbl_clipboard_copy.Content = "Copied to clipboard";
+                lbl_clipboard_copy.Foreground = Brushes.Green;
                 SetOnTickEvent(3000);
                 return;
             }
@@ -321,6 +323,8 @@ namespace what3pass
                                     ((Button)sender).VerticalContentAlignment = VerticalAlignment.Center;
                                     ((Button)sender).HorizontalContentAlignment = HorizontalAlignment.Center;
                                     gif_loading.Visibility = Visibility.Hidden;
+                                    lbl_clipboard_copy.Content = "Success, password copied to clipboard!";
+                                    lbl_clipboard_copy.Foreground = Brushes.Green;
                                     grd_viewentrymain.IsEnabled = true;
                                     Clipboard.SetText((string)((Button)sender).Content);
                                     lbl_clipboard_copy.Visibility = Visibility.Visible;
@@ -336,34 +340,28 @@ namespace what3pass
                         }
                     }
                     gif_loading.Visibility = Visibility.Hidden;
+                    lbl_clipboard_copy.Visibility = Visibility.Visible;
+                    lbl_clipboard_copy.Foreground = Brushes.Red;
+                    lbl_clipboard_copy.Content = "Your current Geo-location does not match a designated safe-zone allocated to this password, please try again!";
                     grd_viewentrymain.IsEnabled = true;
+                    SetOnTickEvent(8000);
                 }
             }
         }
 
         private void IncrementMapPosition(double meters)
         {
-            // number of km per degree = ~111km (111.32 in google maps, but range varies between 110.567km at the equator and 111.699km at the poles)
-            // 1km in degree = 1 / 111.32km = 0.0089
-            // 1m in degree = 0.0089 / 1000 = 0.0000089
             double coef = meters * 0.0000089;
 
             _localLatLong.Lat = _localLatLong.Lat + coef;
-
-            // pi / 180 = 0.018
             _localLatLong.Lng = _localLatLong.Lng + coef / Math.Cos(_localLatLong.Lat * 0.018);
         }
 
         private void DecrementMapPosition(double meters)
         {
-            // number of km per degree = ~111km (111.32 in google maps, but range varies between 110.567km at the equator and 111.699km at the poles)
-            // 1km in degree = 1 / 111.32km = 0.0089
-            // 1m in degree = 0.0089 / 1000 = 0.0000089
             double coef = meters * 0.0000089;
 
             _localLatLong.Lat = _localLatLong.Lat - coef;
-
-            // pi / 180 = 0.018
             _localLatLong.Lng = _localLatLong.Lng - coef / Math.Cos(_localLatLong.Lat * 0.018);
         }
 

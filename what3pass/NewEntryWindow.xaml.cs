@@ -17,9 +17,8 @@ using System.Timers;
 //Map Package
 using GMap.NET;
 using GMap.NET.MapProviders;
-using GMap.NET.WindowsForms;
-using GMap.NET.WindowsForms.Markers;
-using GMap.NET.WindowsForms.ToolTips;
+using GMap.NET.WindowsPresentation;
+using GMap.NET.ObjectModel;
 using System.Diagnostics;
 using what3words.dotnet.wrapper;
 using what3words.dotnet.wrapper.models;
@@ -87,7 +86,7 @@ namespace what3pass
             mapView.MapProvider = GoogleMapProvider.Instance;
             GMaps.Instance.Mode = AccessMode.ServerOnly;
             mapView.MinZoom = 2;
-            mapView.MaxZoom = 21;
+            mapView.MaxZoom = 20;
             mapView.Zoom = 2;
             mapView.ShowCenter = false;
             mapView.MouseWheelZoomType = MouseWheelZoomType.MousePositionAndCenter;
@@ -98,7 +97,7 @@ namespace what3pass
         private void btn_location_Click(object sender, RoutedEventArgs e)
         {
             mapView.Position = new PointLatLng(_latitude, _longitude);
-            mapView.Zoom = 21;
+            mapView.Zoom = 20;
         }
 
         private void btn_newentry_next_Click(object sender, RoutedEventArgs e)
@@ -124,7 +123,7 @@ namespace what3pass
                     btn_mapsquare.IsEnabled = true;
                     btn_mapcircle.IsEnabled = true;
                     mapView.Position = new PointLatLng(_latitude, _longitude);
-                    mapView.Zoom = 21;
+                    mapView.Zoom = 20;
                     break;
                 case "Map":
                     grd_newentry_begin.Visibility = Visibility.Hidden;
@@ -316,10 +315,10 @@ namespace what3pass
         private async void GetWhat3WordsFromPosAsync()
         {
             var indexResult = await _what3wordsAPIWrapper.ConvertTo3WA(new Coordinates(_localLatLong.Lat, _localLatLong.Lng)).RequestAsync();
-            if (txtbox_gridwords.Text.Contains(indexResult.Data.Words))
-            {
-                indexResult = await _what3wordsAPIWrapper.ConvertTo3WA(ShiftCoordinates(4.0, _localLatLong.Lat, _localLatLong.Lng, 4.0)).RequestAsync();
-            }
+            //if (txtbox_gridwords.Text.Contains(indexResult.Data.Words))
+            //{
+            //    indexResult = await _what3wordsAPIWrapper.ConvertTo3WA(new Coordinates(_localLatLong.Lat, _localLatLong.Lng)).RequestAsync();
+            //}
             txtbox_gridwords.Text = $"{txtbox_gridwords.Text}${indexResult.Data.Words}";
         }
 
@@ -713,7 +712,7 @@ namespace what3pass
         private void LatLongFromLocalEvent(object sender, MouseButtonEventArgs e)
         {
             Point pos = Mouse.GetPosition(Application.Current.MainWindow);
-            _localLatLong = mapView.FromLocalToLatLng((int)pos.X, (int)pos.Y);
+            _localLatLong = mapView.FromLocalToLatLng((int)pos.X-210, (int)pos.Y+40);
         }
 
         private void grd_gridoverlay_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -769,43 +768,43 @@ namespace what3pass
 
         private void mapView_OnMapZoomChanged()
         {
-            if (btn_gridoverlay.IsEnabled == true)
-            {
-                grd_gridoverlay.Visibility = Visibility.Hidden;
-                _gridActive = false;
-                grd_gridoverlay.IsEnabled = false;
-            }
+            //if (btn_gridoverlay.IsEnabled == true)
+            //{
+            //    grd_gridoverlay.Visibility = Visibility.Hidden;
+            //    _gridActive = false;
+            //    grd_gridoverlay.IsEnabled = false;
+            //}
 
-            if (mapView.Zoom != 21)
-            {
-                btn_gridoverlay.IsEnabled = false;
-                btn_mapsquare.IsEnabled = false;
-                btn_mapcircle.IsEnabled = false;
-            }
-            else if (_currentEntryStage == "Map" && mapView.Zoom == 21)
-            {
-                btn_gridoverlay.IsEnabled = true;
-                btn_mapsquare.IsEnabled = true;
-                btn_mapcircle.IsEnabled = true;
-            }
+            //if (mapView.Zoom != 22)
+            //{
+            //    btn_gridoverlay.IsEnabled = false;
+            //    btn_mapsquare.IsEnabled = false;
+            //    btn_mapcircle.IsEnabled = false;
+            //}
+            //else if (_currentEntryStage == "Map" && mapView.Zoom == 22)
+            //{
+            btn_gridoverlay.IsEnabled = true;
+            btn_mapsquare.IsEnabled = true;
+            btn_mapcircle.IsEnabled = true;
+            //}
 
-            if (mapView.Zoom < 3)
-            {
-                btn_mapminus.IsEnabled = false;
-            }
-            else
-            {
-                btn_mapminus.IsEnabled = true;
-            }
+            //if (mapView.Zoom < 3)
+            //{
+            //    btn_mapminus.IsEnabled = false;
+            //}
+            //else
+            //{
+            //    btn_mapminus.IsEnabled = true;
+            //}
 
-            if (mapView.Zoom == mapView.MaxZoom)
-            {
-                btn_mapplus.IsEnabled = false;
-            }
-            else
-            {
-                btn_mapplus.IsEnabled = true;
-            }
+            //if (mapView.Zoom == mapView.MaxZoom)
+            //{
+            //    btn_mapplus.IsEnabled = false;
+            //}
+            //else
+            //{
+            //    btn_mapplus.IsEnabled = true;
+            //}
         }
 
         private void btn_mapcircle_Click(object sender, RoutedEventArgs e)
@@ -815,7 +814,62 @@ namespace what3pass
 
         private async void btn_mapsquare_Click(object sender, RoutedEventArgs e)
         {
+            double[] incPos = IncrementMapPosition(1.5);
+            double[] decPos = DecrementMapPosition(1.5);
+            //var result = await _what3wordsAPIWrapper.GridSection(new Coordinates(incPos[0], incPos[1]), new Coordinates(decPos[0], decPos[1])).RequestAsync();
 
+            //var marker = new GMapMarker(new PointLatLng(_latitude, _longitude));
+
+            //Rectangle recShape = new Rectangle
+            //{
+            //    Width = 100,
+            //    Height = 100,
+            //    Fill = Brushes.Red
+
+            //};
+            //marker.Shape = recShape;
+            //marker.Tag = "PolyDot";
+            //marker.Offset = new Point(-recShape.Width / 2, -recShape.Height / 2);
+            //mapView.Markers.Add(marker);
+
+
+
+            //Declare List for pointlatlang
+            List<PointLatLng> pointlatlang = new List<PointLatLng>();
+            pointlatlang.Add(new PointLatLng(incPos[0], incPos[1]));
+            pointlatlang.Add(new PointLatLng(decPos[0], decPos[1]));
+
+            //Declare polygon in gmap
+            GMapPolygon polygon = new GMapPolygon(pointlatlang);
+            mapView.RegenerateShape(polygon);
+            //setting line style
+            (polygon.Shape as System.Windows.Shapes.Path).Stroke = Brushes.DarkBlue;
+            (polygon.Shape as System.Windows.Shapes.Path).StrokeThickness = 1.5;
+            (polygon.Shape as System.Windows.Shapes.Path).Effect = null;
+            //To add polygon in gmap
+            mapView.Markers.Add(polygon);
+        }
+
+        private double[] IncrementMapPosition(double meters)
+        {
+            double[] result = new double[2];
+            double coef = meters * 0.0000089;
+
+            result[0] = _latitude + coef;
+            result[1] = _longitude - coef / Math.Cos(_latitude * 0.018);
+
+            return result;
+        }
+
+        private double[] DecrementMapPosition(double meters)
+        {
+            double[] result = new double[2];
+            double coef = meters * 0.0000089;
+
+            result[0] = _latitude - coef;
+            result[1] = _longitude + coef / Math.Cos(_latitude * 0.018);
+
+            return result;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
