@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -37,19 +38,6 @@ namespace what3pass
             var connectionString = ConfigurationManager.ConnectionStrings["W3PDB"].ConnectionString;
 
             _connection = new SqlConnection(connectionString: connectionString);
-
-            //connection.Open();
-
-            //SqlCommand cmd = new SqlCommand(@"INSERT INTO [User] (username, password, email, created_at, last_updated) VALUES (@Username, @Password, @Email, @Created_at, @Last_updated)", connection);
-            ////cmd.Parameters.Add(new SqlParameter("Id", 1));
-            //cmd.Parameters.Add(new SqlParameter("Username", "Administrator"));
-            //cmd.Parameters.Add(new SqlParameter("Password", "password123"));
-            //cmd.Parameters.Add(new SqlParameter("Email", "admin@what3pass.com"));
-            //cmd.Parameters.Add(new SqlParameter("Created_at", DateTime.Now.ToString("MM/dd/yyyy")));
-            //cmd.Parameters.Add(new SqlParameter("Last_updated", DateTime.Now.ToString("MM/dd/yyyy")));
-            //cmd.ExecuteNonQuery();
-
-            //connection.Close();
         }
 
         private void txt_info_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

@@ -28,6 +28,7 @@ using System.Security.Cryptography;
 using System.IO;
 using System.Threading;
 using System.Web.Security;
+using System.IO.Ports;
 
 namespace what3pass
 {
@@ -49,6 +50,9 @@ namespace what3pass
         private string _currentEntryStage;
 
         private string _connectionString;
+
+        SerialPort _GPSReceiver;
+        double[] _GPS_DATA;
 
         public NewEntryWindow()
         {
@@ -79,6 +83,111 @@ namespace what3pass
             _what3wordsAPIWrapper = new What3WordsV3("E3ZZ4IN2");
 
             _connectionString = ConfigurationManager.ConnectionStrings["W3PDB"].ConnectionString;
+
+            _GPSReceiver = new SerialPort("COM9");
+            _GPSReceiver.ReceivedBytesThreshold = 1024;
+            _GPSReceiver.ReadTimeout = 1000;
+            _GPSReceiver.BaudRate = 4800;
+
+            _GPSReceiver.DataReceived += new SerialDataReceivedEventHandler(GPSReceiver_DataReceived);
+            _GPSReceiver.ErrorReceived += new SerialErrorReceivedEventHandler(GPSReceiver_ErrorReceived);
+            _GPSReceiver.Open();
+            _GPSReceiver.BreakState = true;
+
+            //Lat, Lng
+            _GPS_DATA = new double[2];
+            _OnTickEvent = new System.Timers.Timer();
+            _OnTickEvent.Interval = 5000;
+            _OnTickEvent.Elapsed += OnCheckGPSConnection;
+        }
+
+        private void OnCheckGPSConnection(Object source, ElapsedEventArgs e)
+        {
+            _OnTickEvent.Enabled = false;
+
+            try
+            {
+                _GPSReceiver.Open();
+                _GPSReceiver.BreakState = true;
+                return;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            _OnTickEvent.Enabled = true;
+        }
+
+        private void GPSReceiver_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            if (_GPSReceiver.IsOpen)
+            {
+                double rawLat;
+                double rawLng;
+
+                try
+                {
+                    if (_GPSReceiver.ReadLine().Contains('*'))
+                    {
+                        string[] bufferData = _GPSReceiver.ReadExisting().Split('$');
+
+                        for (int i = 0; i < bufferData.Length; i++)
+                        {
+                            if (bufferData[i].Contains('*'))
+                            {
+                                if (bufferData[i].StartsWith("GPRMC"))
+                                {
+                                    if (bufferData[i].Split(',')[3] != "" && bufferData[i].Split(',')[5] != "")
+                                    {
+                                        rawLat = double.Parse(bufferData[i].Split(',')[3]);
+                                        rawLng = double.Parse(bufferData[i].Split(',')[5]);
+
+                                        //Lat Processing
+                                        int latDeg = (int)rawLat / 100;
+                                        double latMin = rawLat - (latDeg * 100);
+
+                                        _GPS_DATA[0] = Convert.ToDouble(latDeg) + (latMin / 60.0);
+
+                                        if (bufferData[i].Split(',')[4] == "S")
+                                        {
+                                            _GPS_DATA[0] = _GPS_DATA[0] * -1;
+                                        }
+
+                                        //Lng Processing
+                                        int lngDeg = (int)rawLng / 100;
+                                        double lngMin = rawLng - (lngDeg * 100);
+
+                                        _GPS_DATA[1] = Convert.ToDouble(lngDeg) + (lngMin / 60.0);
+
+                                        if (bufferData[i].Split(',')[6] == "W")
+                                        {
+                                            _GPS_DATA[1] = _GPS_DATA[1] * -1;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        if (_GPS_DATA[0] != 0 && _GPS_DATA[1] != 0)
+                        {
+                            Console.WriteLine("GPS Read.");
+                            Console.WriteLine("Latitude: " + _GPS_DATA[0]);
+                            Console.WriteLine("Longitude: " + _GPS_DATA[1]);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+        }
+
+        private void GPSReceiver_ErrorReceived(object sender, SerialErrorReceivedEventArgs e)
+        {
+            Console.WriteLine("SerialPort: Error Received.");
+            //_OnTickEvent.Enabled = true;
         }
 
         private void mapView_Loaded(object sender, RoutedEventArgs e)
@@ -96,6 +205,29 @@ namespace what3pass
 
         private void btn_location_Click(object sender, RoutedEventArgs e)
         {
+            if (_GPSReceiver.IsOpen)
+            {
+                if (_GPS_DATA[0] != 0 && _GPS_DATA[1] != 0)
+                {
+                    mapView.Position = new PointLatLng(_GPS_DATA[0], _GPS_DATA[1]);
+                    mapView.Zoom = 20;
+                    return;
+                }
+            } 
+            else
+            {
+                try
+                {
+                    _GPSReceiver.Open();
+                    _GPSReceiver.BreakState = true;
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+
             mapView.Position = new PointLatLng(_latitude, _longitude);
             mapView.Zoom = 20;
         }
