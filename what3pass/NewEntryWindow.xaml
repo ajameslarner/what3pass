@@ -116,9 +116,7 @@
                     </Button.Background>
                 </Button>
             </StackPanel>
-            <StackPanel DockPanel.Dock ="Right">
-
-            </StackPanel>
+            <StackPanel DockPanel.Dock ="Right"/>
         </DockPanel>
         <Grid x:Name="grd_mappanel" Visibility="Hidden">
             <gmaps:GMapControl x:Name="mapView" OnMapZoomChanged="mapView_OnMapZoomChanged" Margin="345,15,25,0" Loaded="mapView_Loaded" Width="500" Height="500" >
@@ -169,5 +167,6 @@
             <Button x:Name="btn_43" Click="btn_43_Click" Content="x" Grid.Column="3" Grid.Row="4" BorderBrush="{x:Null}" Background="LightBlue" Opacity="0.399" Cursor="Hand"></Button>
             <Button x:Name="btn_44" Click="btn_44_Click" Content="x" Grid.Column="4" Grid.Row="4" BorderBrush="{x:Null}" Background="LightBlue" Opacity="0.399" Cursor="Hand"></Button>
         </Grid>
+        <Label x:Name="lbl_gpsdeviceconnected" Visibility="Hidden" Opacity="0.65" Content="GPS Device Connected" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White" Margin="506,397,187,77" Background="Black"/>
     </Grid>
 </Window>

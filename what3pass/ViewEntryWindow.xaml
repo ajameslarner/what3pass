@@ -51,5 +51,6 @@
                 <Label x:Name="lbl_clipboard_copy" Visibility="Hidden" Content="Copied to clipboard!" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="#FF158F00"/>
             </StackPanel>
         </DockPanel>
+        <Label x:Name="lbl_gpsdeviceconnected" Visibility="Hidden" Opacity="0.65" Content="GPS Device Connected" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White" Margin="346,495,347,-21" Background="Black"/>
     </Grid>
 </Window>

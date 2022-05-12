@@ -30,6 +30,7 @@ using System.Security.Cryptography;
 using System.IO;
 using what3words.dotnet.wrapper;
 using what3words.dotnet.wrapper.models;
+using System.IO.Ports;
 
 namespace what3pass
 {
@@ -75,8 +76,78 @@ namespace what3pass
                 _geoCoordinate = e.Position.Location;
                 _latitude = _geoCoordinate.Latitude;
                 _longitude = _geoCoordinate.Longitude;
-                lbl_what3words_position.Content = $@"\\\{await GetWhat3WordsFromPosAsync(_latitude, _longitude)}";
             };
+
+            _OnTickEvent = new System.Timers.Timer();
+            _OnTickEvent.Interval = 15000;
+            _OnTickEvent.Elapsed += OnCheckDeviceLocation;
+            _OnTickEvent.Enabled = true;
+            CheckDeviceLocation();
+        }
+
+        private async void OnCheckDeviceLocation(object source, ElapsedEventArgs e)
+        {
+            if (MainWindow._GPSReceiver.IsOpen)
+            {
+                if (MainWindow._GPS_DATA[0] != 0 && MainWindow._GPS_DATA[1] != 0)
+                {
+                    lbl_what3words_position.Dispatcher.Invoke(new Action(async () =>
+                    {
+                        lbl_what3words_position.Content = $@"\\\{await GetWhat3WordsFromPosAsync(MainWindow._GPS_DATA[0], MainWindow._GPS_DATA[1])}";
+                    }));
+                }
+            }
+            else
+            {
+                lbl_what3words_position.Dispatcher.Invoke(new Action( async () =>
+                {
+                    lbl_what3words_position.Content = $@"\\\{await GetWhat3WordsFromPosAsync(_latitude, _longitude)}";
+                }));
+            }
+        }
+
+        private async void CheckDeviceLocation()
+        {
+            if (MainWindow._GPSReceiver.IsOpen)
+            {
+                if (MainWindow._GPS_DATA[0] != 0 && MainWindow._GPS_DATA[1] != 0)
+                {
+                    lbl_what3words_position.Dispatcher.Invoke(new Action(async () =>
+                    {
+                        lbl_what3words_position.Content = $@"\\\{await GetWhat3WordsFromPosAsync(MainWindow._GPS_DATA[0], MainWindow._GPS_DATA[1])}";
+                    }));
+
+                    lbl_gpsdeviceconnected.Dispatcher.Invoke(new Action(() =>
+                    {
+                        lbl_gpsdeviceconnected.Visibility = Visibility.Visible;
+                        lbl_gpsdeviceconnected.Content = "GPS Device Detected";
+                    }));
+                    SetOnTickDeviceWarningEvent(3000);
+                }
+            }
+            else
+            {
+                lbl_what3words_position.Dispatcher.Invoke(new Action(async () =>
+                {
+                    lbl_what3words_position.Content = $@"\\\{await GetWhat3WordsFromPosAsync(_latitude, _longitude)}";
+                }));
+            }
+        }
+
+        private void SetOnTickDeviceWarningEvent(int interval)
+        {
+            _OnTickEvent = new System.Timers.Timer(interval);
+            _OnTickEvent.Elapsed += OnTimedEventDeviceWarning;
+            _OnTickEvent.AutoReset = false;
+            _OnTickEvent.Enabled = true;
+        }
+
+        private void OnTimedEventDeviceWarning(object source, ElapsedEventArgs e)
+        {
+            lbl_gpsdeviceconnected.Dispatcher.Invoke(new Action(() =>
+            {
+                lbl_gpsdeviceconnected.Visibility = Visibility.Hidden;
+            }));
         }
 
         private void DockPanel_Loaded(object sender, RoutedEventArgs e)

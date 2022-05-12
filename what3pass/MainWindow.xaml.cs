@@ -17,6 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Timers;
 
 namespace what3pass
 {
@@ -26,18 +27,123 @@ namespace what3pass
     public partial class MainWindow : Window
     {
         private SqlConnection _connection;
-        public static User s_currentUser;
 
+        public static User s_currentUser;
         public static byte[] GlobalIVKey;
+        public static double[] _GPS_DATA;
+        public static SerialPort _GPSReceiver;
+
+        private System.Timers.Timer _OnTickEvent;
+
         public MainWindow()
         {
             InitializeComponent();
 
             grd_main_login.Visibility = Visibility.Visible;
-
             var connectionString = ConfigurationManager.ConnectionStrings["W3PDB"].ConnectionString;
-
             _connection = new SqlConnection(connectionString: connectionString);
+
+
+            _GPS_DATA = new double[2];
+            _GPSReceiver = new SerialPort("COM9");
+            _GPSReceiver.ReceivedBytesThreshold = 1024;
+            _GPSReceiver.ReadTimeout = 1000;
+            _GPSReceiver.BaudRate = 4800;
+            _GPSReceiver.DataReceived += new SerialDataReceivedEventHandler(GPSReceiver_DataReceived);
+
+            //Lat, Lng
+            _OnTickEvent = new System.Timers.Timer();
+            _OnTickEvent.Interval = 15000;
+            _OnTickEvent.Elapsed += OnCheckGPSConnection;
+            _OnTickEvent.Enabled = true;
+        }
+
+        private void OnCheckGPSConnection(object source, ElapsedEventArgs e)
+        {
+            Console.WriteLine("GPS Check");
+
+            if (!_GPSReceiver.IsOpen)
+            {
+                try
+                {
+                    _GPSReceiver.Open();
+                    return;
+                }
+                catch (UnauthorizedAccessException ex)
+                {
+                    _GPSReceiver.Dispose();
+                    Console.WriteLine(ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+        }
+
+        private void GPSReceiver_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            if (_GPSReceiver.IsOpen)
+            {
+                double rawLat;
+                double rawLng;
+
+                try
+                {
+                    if (_GPSReceiver.ReadLine().Contains('*'))
+                    {
+                        string[] bufferData = _GPSReceiver.ReadExisting().Split('$');
+
+                        for (int i = 0; i < bufferData.Length; i++)
+                        {
+                            if (bufferData[i].Contains('*'))
+                            {
+                                if (bufferData[i].StartsWith("GPRMC"))
+                                {
+                                    if (bufferData[i].Split(',')[3] != "" && bufferData[i].Split(',')[5] != "")
+                                    {
+                                        rawLat = double.Parse(bufferData[i].Split(',')[3]);
+                                        rawLng = double.Parse(bufferData[i].Split(',')[5]);
+
+                                        //Lat Processing
+                                        int latDeg = (int)rawLat / 100;
+                                        double latMin = rawLat - (latDeg * 100);
+
+                                        _GPS_DATA[0] = Convert.ToDouble(latDeg) + (latMin / 60.0);
+
+                                        if (bufferData[i].Split(',')[4] == "S")
+                                        {
+                                            _GPS_DATA[0] = _GPS_DATA[0] * -1;
+                                        }
+
+                                        //Lng Processing
+                                        int lngDeg = (int)rawLng / 100;
+                                        double lngMin = rawLng - (lngDeg * 100);
+
+                                        _GPS_DATA[1] = Convert.ToDouble(lngDeg) + (lngMin / 60.0);
+
+                                        if (bufferData[i].Split(',')[6] == "W")
+                                        {
+                                            _GPS_DATA[1] = _GPS_DATA[1] * -1;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        if (_GPS_DATA[0] != 0 && _GPS_DATA[1] != 0)
+                        {
+                            Console.WriteLine("GPS Read.");
+                            Console.WriteLine("Latitude: " + _GPS_DATA[0]);
+                            Console.WriteLine("Longitude: " + _GPS_DATA[1]);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
         }
 
         private void txt_info_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
