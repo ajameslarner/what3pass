@@ -87,7 +87,7 @@ namespace what3pass
             mapView.MapProvider = GoogleMapProvider.Instance;
             GMaps.Instance.Mode = AccessMode.ServerOnly;
             mapView.MinZoom = 2;
-            mapView.MaxZoom = 20;
+            mapView.MaxZoom = 21;
             mapView.Zoom = 2;
             mapView.ShowCenter = false;
             mapView.MouseWheelZoomType = MouseWheelZoomType.MousePositionAndCenter;
@@ -102,7 +102,7 @@ namespace what3pass
                 if (MainWindow._GPS_DATA[0] != 0 && MainWindow._GPS_DATA[1] != 0)
                 {
                     mapView.Position = new PointLatLng(MainWindow._GPS_DATA[0], MainWindow._GPS_DATA[1]);
-                    mapView.Zoom = 20;
+                    mapView.Zoom = 21;
                     lbl_gpsdeviceconnected.Visibility = Visibility.Visible;
                     lbl_gpsdeviceconnected.Content = "GPS Device Detected";
                     SetOnTickDeviceWarningEvent(3000);
@@ -111,7 +111,7 @@ namespace what3pass
             else
             {
                 mapView.Position = new PointLatLng(_latitude, _longitude);
-                mapView.Zoom = 20;
+                mapView.Zoom = 21;
             }
         }
 
@@ -158,7 +158,7 @@ namespace what3pass
                         if (MainWindow._GPS_DATA[0] != 0 && MainWindow._GPS_DATA[1] != 0)
                         {
                             mapView.Position = new PointLatLng(MainWindow._GPS_DATA[0], MainWindow._GPS_DATA[1]);
-                            mapView.Zoom = 20;
+                            mapView.Zoom = 21;
                             lbl_gpsdeviceconnected.Visibility = Visibility.Visible;
                             lbl_gpsdeviceconnected.Content = "GPS Device Detected";
                         }
@@ -166,7 +166,7 @@ namespace what3pass
                     else
                     {
                         mapView.Position = new PointLatLng(_latitude, _longitude);
-                        mapView.Zoom = 20;
+                        mapView.Zoom = 21;
                     }
                     break;
                 case "Map":
@@ -236,7 +236,6 @@ namespace what3pass
                 aesAlg.Key = Key;
                 Byte[] IVKey = Encoding.ASCII.GetBytes("COLLABORATIONISM");
                 aesAlg.IV = IVKey;
-                aesAlg.Mode = CipherMode.CBC;
 
                 ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
                 using (MemoryStream msEncrypt = new MemoryStream())
@@ -356,14 +355,38 @@ namespace what3pass
         {
             mapView.Zoom--;
         }
-        private async void GetWhat3WordsFromPosAsync()
+        private async void GetWhat3WordsFromPosAsync(Button b)
         {
+            Point relativePoint = b.TransformToAncestor(this).Transform(new Point(0, 0));
+            _localLatLong = mapView.FromLocalToLatLng((int)relativePoint.X - 330, (int)relativePoint.Y+10);
+
             var indexResult = await _what3wordsAPIWrapper.ConvertTo3WA(new Coordinates(_localLatLong.Lat, _localLatLong.Lng)).RequestAsync();
-            //if (txtbox_gridwords.Text.Contains(indexResult.Data.Words))
-            //{
-            //    indexResult = await _what3wordsAPIWrapper.ConvertTo3WA(new Coordinates(_localLatLong.Lat, _localLatLong.Lng)).RequestAsync();
-            //}
+            
+            var result = await _what3wordsAPIWrapper.ConvertToCoordinates(indexResult.Data.Words).RequestAsync();
+
+            var marker = new GMapMarker(new PointLatLng(result.Data.Coordinates.Lat, result.Data.Coordinates.Lng));
+
+            if (txtbox_gridwords.Text == string.Empty)
+            {
+                mapView.Position = new PointLatLng(result.Data.Coordinates.Lat, result.Data.Coordinates.Lng);
+                b.Background = Brushes.LightBlue;
+                btn_22.Background = Brushes.Red;
+            }
+
             txtbox_gridwords.Text = $"{txtbox_gridwords.Text}${indexResult.Data.Words}";
+
+            Rectangle recShape = new Rectangle
+            {
+                Width = 67,
+                Height = 67,
+                Fill = Brushes.Red,
+                Opacity = 0.35
+            };
+
+            marker.Shape = recShape;
+            marker.Tag = indexResult.Data.Words;
+            marker.Offset = new Point((-recShape.Width / 2)-1, (-recShape.Height / 2)-9);
+            mapView.Markers.Add(marker);
         }
 
         private async void RemoveWhat3WordsFromPosAsync()
@@ -400,14 +423,14 @@ namespace what3pass
             if (btn_00.Background == Brushes.LightBlue)
             {
                 btn_00.Background = Brushes.Red;
-                GetWhat3WordsFromPosAsync();
+                GetWhat3WordsFromPosAsync((Button)sender);
 
             }
-            else if (btn_00.Background == Brushes.Red)
-            {
-                btn_00.Background = Brushes.LightBlue;
-                RemoveWhat3WordsFromPosAsync();
-            }
+            //else if (btn_00.Background == Brushes.Red)
+            //{
+            //    btn_00.Background = Brushes.LightBlue;
+            //    RemoveWhat3WordsFromPosAsync((Button)sender);
+            //}
         }
 
         private void btn_01_Click(object sender, RoutedEventArgs e)
@@ -415,13 +438,13 @@ namespace what3pass
             if (btn_01.Background == Brushes.LightBlue)
             {
                 btn_01.Background = Brushes.Red;
-                GetWhat3WordsFromPosAsync();
+                GetWhat3WordsFromPosAsync((Button)sender);
             }
-            else if (btn_01.Background == Brushes.Red)
-            {
-                btn_01.Background = Brushes.LightBlue;
-                RemoveWhat3WordsFromPosAsync();
-            }
+            //else if (btn_01.Background == Brushes.Red)
+            //{
+            //    btn_01.Background = Brushes.LightBlue;
+            //    RemoveWhat3WordsFromPosAsync((Button)sender);
+            //}
         }
 
         private void btn_02_Click(object sender, RoutedEventArgs e)
@@ -429,13 +452,13 @@ namespace what3pass
             if (btn_02.Background == Brushes.LightBlue)
             {
                 btn_02.Background = Brushes.Red;
-                GetWhat3WordsFromPosAsync();
+                GetWhat3WordsFromPosAsync((Button)sender);
             }
-            else if (btn_02.Background == Brushes.Red)
-            {
-                btn_02.Background = Brushes.LightBlue;
-                RemoveWhat3WordsFromPosAsync();
-            }
+            //else if (btn_02.Background == Brushes.Red)
+            //{
+            //    btn_02.Background = Brushes.LightBlue;
+            //    RemoveWhat3WordsFromPosAsync((Button)sender);
+            //}
         }
 
         private void btn_03_Click(object sender, RoutedEventArgs e)
@@ -443,13 +466,13 @@ namespace what3pass
             if (btn_03.Background == Brushes.LightBlue)
             {
                 btn_03.Background = Brushes.Red;
-                GetWhat3WordsFromPosAsync();
+                GetWhat3WordsFromPosAsync((Button)sender);
             }
-            else if (btn_03.Background == Brushes.Red)
-            {
-                btn_03.Background = Brushes.LightBlue;
-                RemoveWhat3WordsFromPosAsync();
-            }
+            //else if (btn_03.Background == Brushes.Red)
+            //{
+            //    btn_03.Background = Brushes.LightBlue;
+            //    RemoveWhat3WordsFromPosAsync();
+            //}
         }
 
         private void btn_04_Click(object sender, RoutedEventArgs e)
@@ -457,13 +480,13 @@ namespace what3pass
             if (btn_04.Background == Brushes.LightBlue)
             {
                 btn_04.Background = Brushes.Red;
-                GetWhat3WordsFromPosAsync();
+                GetWhat3WordsFromPosAsync((Button)sender);
             }
-            else if (btn_04.Background == Brushes.Red)
-            {
-                btn_04.Background = Brushes.LightBlue;
-                RemoveWhat3WordsFromPosAsync();
-            }
+            //else if (btn_04.Background == Brushes.Red)
+            //{
+            //    btn_04.Background = Brushes.LightBlue;
+            //    RemoveWhat3WordsFromPosAsync();
+            //}
         }
 
         private void btn_10_Click(object sender, RoutedEventArgs e)
@@ -471,13 +494,13 @@ namespace what3pass
             if (btn_10.Background == Brushes.LightBlue)
             {
                 btn_10.Background = Brushes.Red;
-                GetWhat3WordsFromPosAsync();
+                GetWhat3WordsFromPosAsync((Button)sender);
             }
-            else if (btn_10.Background == Brushes.Red)
-            {
-                btn_10.Background = Brushes.LightBlue;
-                RemoveWhat3WordsFromPosAsync();
-            }
+            //else if (btn_10.Background == Brushes.Red)
+            //{
+            //    btn_10.Background = Brushes.LightBlue;
+            //    RemoveWhat3WordsFromPosAsync((Button)sender);
+            //}
         }
 
         private void btn_11_Click(object sender, RoutedEventArgs e)
@@ -485,13 +508,13 @@ namespace what3pass
             if (btn_11.Background == Brushes.LightBlue)
             {
                 btn_11.Background = Brushes.Red;
-                GetWhat3WordsFromPosAsync();
+                GetWhat3WordsFromPosAsync((Button)sender);
             }
-            else if (btn_11.Background == Brushes.Red)
-            {
-                btn_11.Background = Brushes.LightBlue;
-                RemoveWhat3WordsFromPosAsync();
-            }
+            //else if (btn_11.Background == Brushes.Red)
+            //{
+            //    btn_11.Background = Brushes.LightBlue;
+            //    RemoveWhat3WordsFromPosAsync();
+            //}
         }
 
         private void btn_12_Click(object sender, RoutedEventArgs e)
@@ -499,13 +522,13 @@ namespace what3pass
             if (btn_12.Background == Brushes.LightBlue)
             {
                 btn_12.Background = Brushes.Red;
-                GetWhat3WordsFromPosAsync();
+                GetWhat3WordsFromPosAsync((Button)sender);
             }
-            else if (btn_12.Background == Brushes.Red)
-            {
-                btn_12.Background = Brushes.LightBlue;
-                RemoveWhat3WordsFromPosAsync();
-            }
+            //else if (btn_12.Background == Brushes.Red)
+            //{
+            //    btn_12.Background = Brushes.LightBlue;
+            //    RemoveWhat3WordsFromPosAsync();
+            //}
         }
 
         private void btn_13_Click(object sender, RoutedEventArgs e)
@@ -513,13 +536,13 @@ namespace what3pass
             if (btn_13.Background == Brushes.LightBlue)
             {
                 btn_13.Background = Brushes.Red;
-                GetWhat3WordsFromPosAsync();
+                GetWhat3WordsFromPosAsync((Button)sender);
             }
-            else if (btn_13.Background == Brushes.Red)
-            {
-                btn_13.Background = Brushes.LightBlue;
-                RemoveWhat3WordsFromPosAsync();
-            }
+            //else if (btn_13.Background == Brushes.Red)
+            //{
+            //    btn_13.Background = Brushes.LightBlue;
+            //    RemoveWhat3WordsFromPosAsync();
+            //}
         }
 
         private void btn_14_Click(object sender, RoutedEventArgs e)
@@ -527,13 +550,13 @@ namespace what3pass
             if (btn_14.Background == Brushes.LightBlue)
             {
                 btn_14.Background = Brushes.Red;
-                GetWhat3WordsFromPosAsync();
+                GetWhat3WordsFromPosAsync((Button)sender);
             }
-            else if (btn_14.Background == Brushes.Red)
-            {
-                btn_14.Background = Brushes.LightBlue;
-                RemoveWhat3WordsFromPosAsync();
-            }
+            //else if (btn_14.Background == Brushes.Red)
+            //{
+            //    btn_14.Background = Brushes.LightBlue;
+            //    RemoveWhat3WordsFromPosAsync();
+            //}
         }
 
         private void btn_20_Click(object sender, RoutedEventArgs e)
@@ -541,13 +564,13 @@ namespace what3pass
             if (btn_20.Background == Brushes.LightBlue)
             {
                 btn_20.Background = Brushes.Red;
-                GetWhat3WordsFromPosAsync();
+                GetWhat3WordsFromPosAsync((Button)sender);
             }
-            else if (btn_20.Background == Brushes.Red)
-            {
-                btn_20.Background = Brushes.LightBlue;
-                RemoveWhat3WordsFromPosAsync();
-            }
+            //else if (btn_20.Background == Brushes.Red)
+            //{
+            //    btn_20.Background = Brushes.LightBlue;
+            //    RemoveWhat3WordsFromPosAsync();
+            //}
         }
 
         private void btn_21_Click(object sender, RoutedEventArgs e)
@@ -555,13 +578,13 @@ namespace what3pass
             if (btn_21.Background == Brushes.LightBlue)
             {
                 btn_21.Background = Brushes.Red;
-                GetWhat3WordsFromPosAsync();
+                GetWhat3WordsFromPosAsync((Button)sender);
             }
-            else if (btn_21.Background == Brushes.Red)
-            {
-                btn_21.Background = Brushes.LightBlue;
-                RemoveWhat3WordsFromPosAsync();
-            }
+            //else if (btn_21.Background == Brushes.Red)
+            //{
+            //    btn_21.Background = Brushes.LightBlue;
+            //    RemoveWhat3WordsFromPosAsync();
+            //}
         }
 
         private void btn_22_Click(object sender, RoutedEventArgs e)
@@ -569,13 +592,13 @@ namespace what3pass
             if (btn_22.Background == Brushes.LightBlue)
             {
                 btn_22.Background = Brushes.Red;
-                GetWhat3WordsFromPosAsync();
+                GetWhat3WordsFromPosAsync((Button)sender);
             }
-            else if (btn_22.Background == Brushes.Red)
-            {
-                btn_22.Background = Brushes.LightBlue;
-                RemoveWhat3WordsFromPosAsync();
-            }
+            //else if (btn_22.Background == Brushes.Red)
+            //{
+            //    btn_22.Background = Brushes.LightBlue;
+            //    RemoveWhat3WordsFromPosAsync();
+            //}
         }
 
         private void btn_23_Click(object sender, RoutedEventArgs e)
@@ -583,13 +606,13 @@ namespace what3pass
             if (btn_23.Background == Brushes.LightBlue)
             {
                 btn_23.Background = Brushes.Red;
-                GetWhat3WordsFromPosAsync();
+                GetWhat3WordsFromPosAsync((Button)sender);
             }
-            else if (btn_23.Background == Brushes.Red)
-            {
-                btn_23.Background = Brushes.LightBlue;
-                RemoveWhat3WordsFromPosAsync();
-            }
+            //else if (btn_23.Background == Brushes.Red)
+            //{
+            //    btn_23.Background = Brushes.LightBlue;
+            //    RemoveWhat3WordsFromPosAsync();
+            //}
         }
 
         private void btn_24_Click(object sender, RoutedEventArgs e)
@@ -597,13 +620,13 @@ namespace what3pass
             if (btn_24.Background == Brushes.LightBlue)
             {
                 btn_24.Background = Brushes.Red;
-                GetWhat3WordsFromPosAsync();
+                GetWhat3WordsFromPosAsync((Button)sender);
             }
-            else if (btn_24.Background == Brushes.Red)
-            {
-                btn_24.Background = Brushes.LightBlue;
-                RemoveWhat3WordsFromPosAsync();
-            }
+            //else if (btn_24.Background == Brushes.Red)
+            //{
+            //    btn_24.Background = Brushes.LightBlue;
+            //    RemoveWhat3WordsFromPosAsync();
+            //}
         }
 
         private void btn_30_Click(object sender, RoutedEventArgs e)
@@ -611,13 +634,13 @@ namespace what3pass
             if (btn_30.Background == Brushes.LightBlue)
             {
                 btn_30.Background = Brushes.Red;
-                GetWhat3WordsFromPosAsync();
+                GetWhat3WordsFromPosAsync((Button)sender);
             }
-            else if (btn_30.Background == Brushes.Red)
-            {
-                btn_30.Background = Brushes.LightBlue;
-                RemoveWhat3WordsFromPosAsync();
-            }
+            //else if (btn_30.Background == Brushes.Red)
+            //{
+            //    btn_30.Background = Brushes.LightBlue;
+            //    RemoveWhat3WordsFromPosAsync();
+            //}
         }
 
         private void btn_31_Click(object sender, RoutedEventArgs e)
@@ -625,13 +648,13 @@ namespace what3pass
             if (btn_31.Background == Brushes.LightBlue)
             {
                 btn_31.Background = Brushes.Red;
-                GetWhat3WordsFromPosAsync();
+                GetWhat3WordsFromPosAsync((Button)sender);
             }
-            else if (btn_31.Background == Brushes.Red)
-            {
-                btn_31.Background = Brushes.LightBlue;
-                RemoveWhat3WordsFromPosAsync();
-            }
+            //else if (btn_31.Background == Brushes.Red)
+            //{
+            //    btn_31.Background = Brushes.LightBlue;
+            //    RemoveWhat3WordsFromPosAsync();
+            //}
         }
 
         private void btn_32_Click(object sender, RoutedEventArgs e)
@@ -639,13 +662,13 @@ namespace what3pass
             if (btn_32.Background == Brushes.LightBlue)
             {
                 btn_32.Background = Brushes.Red;
-                GetWhat3WordsFromPosAsync();
+                GetWhat3WordsFromPosAsync((Button)sender);
             }
-            else if (btn_32.Background == Brushes.Red)
-            {
-                btn_32.Background = Brushes.LightBlue;
-                RemoveWhat3WordsFromPosAsync();
-            }
+            //else if (btn_32.Background == Brushes.Red)
+            //{
+            //    btn_32.Background = Brushes.LightBlue;
+            //    RemoveWhat3WordsFromPosAsync();
+            //}
         }
 
         private void btn_33_Click(object sender, RoutedEventArgs e)
@@ -653,13 +676,13 @@ namespace what3pass
             if (btn_33.Background == Brushes.LightBlue)
             {
                 btn_33.Background = Brushes.Red;
-                GetWhat3WordsFromPosAsync();
+                GetWhat3WordsFromPosAsync((Button)sender);
             }
-            else if (btn_33.Background == Brushes.Red)
-            {
-                btn_33.Background = Brushes.LightBlue;
-                RemoveWhat3WordsFromPosAsync();
-            }
+            //else if (btn_33.Background == Brushes.Red)
+            //{
+            //    btn_33.Background = Brushes.LightBlue;
+            //    RemoveWhat3WordsFromPosAsync();
+            //}
         }
 
         private void btn_34_Click(object sender, RoutedEventArgs e)
@@ -667,13 +690,13 @@ namespace what3pass
             if (btn_34.Background == Brushes.LightBlue)
             {
                 btn_34.Background = Brushes.Red;
-                GetWhat3WordsFromPosAsync();
+                GetWhat3WordsFromPosAsync((Button)sender);
             }
-            else if (btn_34.Background == Brushes.Red)
-            {
-                btn_34.Background = Brushes.LightBlue;
-                RemoveWhat3WordsFromPosAsync();
-            }
+            //else if (btn_34.Background == Brushes.Red)
+            //{
+            //    btn_34.Background = Brushes.LightBlue;
+            //    RemoveWhat3WordsFromPosAsync();
+            //}
         }
 
         private void btn_40_Click(object sender, RoutedEventArgs e)
@@ -681,13 +704,13 @@ namespace what3pass
             if (btn_40.Background == Brushes.LightBlue)
             {
                 btn_40.Background = Brushes.Red;
-                GetWhat3WordsFromPosAsync();
+                GetWhat3WordsFromPosAsync((Button)sender);
             }
-            else if (btn_40.Background == Brushes.Red)
-            {
-                btn_40.Background = Brushes.LightBlue;
-                RemoveWhat3WordsFromPosAsync();
-            }
+            //else if (btn_40.Background == Brushes.Red)
+            //{
+            //    btn_40.Background = Brushes.LightBlue;
+            //    RemoveWhat3WordsFromPosAsync();
+            //}
         }
 
         private void btn_41_Click(object sender, RoutedEventArgs e)
@@ -695,13 +718,13 @@ namespace what3pass
             if (btn_41.Background == Brushes.LightBlue)
             {
                 btn_41.Background = Brushes.Red;
-                GetWhat3WordsFromPosAsync();
+                GetWhat3WordsFromPosAsync((Button)sender);
             }
-            else if (btn_41.Background == Brushes.Red)
-            {
-                btn_41.Background = Brushes.LightBlue;
-                RemoveWhat3WordsFromPosAsync();
-            }
+            //else if (btn_41.Background == Brushes.Red)
+            //{
+            //    btn_41.Background = Brushes.LightBlue;
+            //    RemoveWhat3WordsFromPosAsync();
+            //}
         }
 
         private void btn_42_Click(object sender, RoutedEventArgs e)
@@ -709,13 +732,13 @@ namespace what3pass
             if (btn_42.Background == Brushes.LightBlue)
             {
                 btn_42.Background = Brushes.Red;
-                GetWhat3WordsFromPosAsync();
+                GetWhat3WordsFromPosAsync((Button)sender);
             }
-            else if (btn_42.Background == Brushes.Red)
-            {
-                btn_42.Background = Brushes.LightBlue;
-                RemoveWhat3WordsFromPosAsync();
-            }
+            //else if (btn_42.Background == Brushes.Red)
+            //{
+            //    btn_42.Background = Brushes.LightBlue;
+            //    RemoveWhat3WordsFromPosAsync();
+            //}
         }
 
         private void btn_43_Click(object sender, RoutedEventArgs e)
@@ -723,13 +746,13 @@ namespace what3pass
             if (btn_43.Background == Brushes.LightBlue)
             {
                 btn_43.Background = Brushes.Red;
-                GetWhat3WordsFromPosAsync();
+                GetWhat3WordsFromPosAsync((Button)sender);
             }
-            else if (btn_43.Background == Brushes.Red)
-            {
-                btn_43.Background = Brushes.LightBlue;
-                RemoveWhat3WordsFromPosAsync();
-            }
+            //else if (btn_43.Background == Brushes.Red)
+            //{
+            //    btn_43.Background = Brushes.LightBlue;
+            //    RemoveWhat3WordsFromPosAsync();
+            //}
         }
 
         private void btn_44_Click(object sender, RoutedEventArgs e)
@@ -737,13 +760,13 @@ namespace what3pass
             if (btn_44.Background == Brushes.LightBlue)
             {
                 btn_44.Background = Brushes.Red;
-                GetWhat3WordsFromPosAsync();
+                GetWhat3WordsFromPosAsync((Button)sender);
             }
-            else if (btn_44.Background == Brushes.Red)
-            {
-                btn_44.Background = Brushes.LightBlue;
-                RemoveWhat3WordsFromPosAsync();
-            }
+            //else if (btn_44.Background == Brushes.Red)
+            //{
+            //    btn_44.Background = Brushes.LightBlue;
+            //    RemoveWhat3WordsFromPosAsync();
+            //}
         }
 
         #endregion
@@ -755,22 +778,40 @@ namespace what3pass
 
         private void LatLongFromLocalEvent(object sender, MouseButtonEventArgs e)
         {
-            Point pos = Mouse.GetPosition(Application.Current.MainWindow);
-            _localLatLong = mapView.FromLocalToLatLng((int)pos.X-210, (int)pos.Y+40);
+            //Point pos = Mouse.GetPosition(Application.Current.MainWindow);
+            //_localLatLong = mapView.FromLocalToLatLng((int)pos.X-200, (int)pos.Y+50);
+
+            //GetWhat3WordsFromPosAsync();
+
+            //var marker = new GMapMarker(new PointLatLng(_localLatLong.Lat, _localLatLong.Lng));
+
+            //Rectangle recShape = new Rectangle
+            //{
+            //    Width = 50,
+            //    Height = 50,
+            //    Fill = Brushes.Red,
+            //    Opacity = 0.35
+
+            //};
+            //marker.Shape = recShape;
+            //marker.Tag = "PolyDot";
+            //marker.Offset = new Point(-recShape.Width / 2, -recShape.Height / 2);
+            //mapView.Markers.Add(marker);
         }
 
         private void grd_gridoverlay_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if (e.NewValue.Equals(true))
-            {
-                AddHandler(MouseDownEvent, new MouseButtonEventHandler(LatLongFromLocalEvent), true);
-                //GetPosFromWhat3WordsAsync();
-                //_localLatLong = mapView.Position;
-            } else if (e.NewValue.Equals(false))
-            {
-                RemoveHandler(MouseDownEvent, new MouseButtonEventHandler(LatLongFromLocalEvent));
-                ClearGridSelections();
-            }
+            //if (e.NewValue.Equals(true))
+            //{
+            //    AddHandler(MouseDownEvent, new MouseButtonEventHandler(LatLongFromLocalEvent), true);
+            //    //GetPosFromWhat3WordsAsync();
+            //    //_localLatLong = mapView.Position;
+            //}
+            //} else if (e.NewValue.Equals(false))
+            //{
+            //    RemoveHandler(MouseDownEvent, new MouseButtonEventHandler(LatLongFromLocalEvent));
+            //    ClearGridSelections();
+            //}
         }
         
         private void ClearGridSelections()
@@ -819,17 +860,17 @@ namespace what3pass
             //    grd_gridoverlay.IsEnabled = false;
             //}
 
-            //if (mapView.Zoom != 22)
+            //if (mapView.Zoom != 23)
             //{
             //    btn_gridoverlay.IsEnabled = false;
             //    btn_mapsquare.IsEnabled = false;
             //    btn_mapcircle.IsEnabled = false;
             //}
-            //else if (_currentEntryStage == "Map" && mapView.Zoom == 22)
+            //else if (_currentEntryStage == "Map" && mapView.Zoom == 20)
             //{
-            btn_gridoverlay.IsEnabled = true;
-            btn_mapsquare.IsEnabled = true;
-            btn_mapcircle.IsEnabled = true;
+                btn_gridoverlay.IsEnabled = true;
+                btn_mapsquare.IsEnabled = true;
+                btn_mapcircle.IsEnabled = true;
             //}
 
             //if (mapView.Zoom < 3)
@@ -853,7 +894,9 @@ namespace what3pass
 
         private void btn_mapcircle_Click(object sender, RoutedEventArgs e)
         {
-            
+            ClearGridSelections();
+            txtbox_gridwords.Text = "";
+            mapView.Markers.Clear();
         }
 
         private async void btn_mapsquare_Click(object sender, RoutedEventArgs e)
@@ -1002,6 +1045,11 @@ namespace what3pass
         private async void btn_newentry_process_Click(object sender, RoutedEventArgs e)
         {
             //await ExecuteW3PEncryptionProcess();
+        }
+
+        private void mapView_OnMapDrag()
+        {
+            ClearGridSelections();
         }
     }
 }

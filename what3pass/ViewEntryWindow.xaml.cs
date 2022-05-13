@@ -362,7 +362,19 @@ namespace what3pass
                             {
                                 byte[] cipherText = Convert.FromBase64String(passDataItem[i]);
 
-                                string word = await GetWhat3WordsFromPosAsync(_latitude,_longitude);
+                                string word = string.Empty;
+
+                                if (MainWindow._GPSReceiver.IsOpen)
+                                {
+                                    if (MainWindow._GPS_DATA[0] != 0 && MainWindow._GPS_DATA[1] != 0)
+                                    {
+                                        word = await GetWhat3WordsFromPosAsync(MainWindow._GPS_DATA[0], MainWindow._GPS_DATA[1]);
+                                    }
+                                }
+                                else
+                                {
+                                    word = await GetWhat3WordsFromPosAsync(_latitude, _longitude);
+                                }
 
                                 var preProcessBytes = Encoding.ASCII.GetBytes(word.Trim());
 
@@ -445,7 +457,6 @@ namespace what3pass
                 aesAlg.Key = Key;
                 Byte[] IVKey = Encoding.ASCII.GetBytes("COLLABORATIONISM");
                 aesAlg.IV = IVKey;
-                aesAlg.Mode = CipherMode.CBC;
 
                 ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
                 using (MemoryStream msDecrypt = new MemoryStream(cipherText))

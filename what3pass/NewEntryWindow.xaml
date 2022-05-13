@@ -119,10 +119,10 @@
             <StackPanel DockPanel.Dock ="Right"/>
         </DockPanel>
         <Grid x:Name="grd_mappanel" Visibility="Hidden">
-            <gmaps:GMapControl x:Name="mapView" OnMapZoomChanged="mapView_OnMapZoomChanged" Margin="345,15,25,0" Loaded="mapView_Loaded" Width="500" Height="500" >
+            <gmaps:GMapControl x:Name="mapView" OnMapDrag="mapView_OnMapDrag" OnMapZoomChanged="mapView_OnMapZoomChanged" Margin="345,15,25,0" Loaded="mapView_Loaded" Width="500" Height="500" >
             </gmaps:GMapControl>
         </Grid>
-        <Grid x:Name="grd_gridoverlay" Background="Transparent" Height="250" Width="250" Margin="345,15,25,0" Visibility="Visible" IsEnabled="False" IsEnabledChanged="grd_gridoverlay_IsEnabledChanged">
+        <Grid x:Name="grd_gridoverlay" Background="Transparent" Height="350" Width="350" Margin="345,15,25,0" Visibility="Visible" IsEnabled="False" IsEnabledChanged="grd_gridoverlay_IsEnabledChanged">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
