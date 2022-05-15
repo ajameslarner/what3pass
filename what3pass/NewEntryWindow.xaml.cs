@@ -114,7 +114,7 @@ namespace what3pass
                 if (MainWindow._GPS_DATA[0] != 0 && MainWindow._GPS_DATA[1] != 0)
                 {
                     mapView.Position = new PointLatLng(MainWindow._GPS_DATA[0], MainWindow._GPS_DATA[1]);
-                    mapView.Zoom = 19;
+                    mapView.Zoom = 20;
                     lbl_gpsdeviceconnected.Visibility = Visibility.Visible;
                     lbl_gpsdeviceconnected.Content = "GPS Device Detected";
                     SetOnTickDeviceWarningEvent(3000);
@@ -123,7 +123,7 @@ namespace what3pass
             else
             {
                 mapView.Position = new PointLatLng(_latitude, _longitude);
-                mapView.Zoom = 19;
+                mapView.Zoom = 20;
             }
         }
 
@@ -170,15 +170,16 @@ namespace what3pass
                         if (MainWindow._GPS_DATA[0] != 0 && MainWindow._GPS_DATA[1] != 0)
                         {
                             mapView.Position = new PointLatLng(MainWindow._GPS_DATA[0], MainWindow._GPS_DATA[1]);
-                            mapView.Zoom = 19;
+                            mapView.Zoom = 20;
                             lbl_gpsdeviceconnected.Visibility = Visibility.Visible;
                             lbl_gpsdeviceconnected.Content = "GPS Device Detected";
+                            SetOnTickDeviceWarningEvent(3000);
                         }
                     }
                     else
                     {
                         mapView.Position = new PointLatLng(_latitude, _longitude);
-                        mapView.Zoom = 19;
+                        mapView.Zoom = 20;
                     }
                     break;
                 case "Map":
@@ -370,7 +371,7 @@ namespace what3pass
         private async void GetWhat3WordsFromPosAsync(Button b)
         {
             Point relativePoint = b.TransformToAncestor(this).Transform(new Point(0, 0));
-            _localLatLong = mapView.FromLocalToLatLng((int)relativePoint.X -350, (int)relativePoint.Y-10);
+            _localLatLong = mapView.FromLocalToLatLng((int)relativePoint.X -512, (int)relativePoint.Y-25);
 
             var indexResult = await _what3wordsAPIWrapper.ConvertTo3WA(new Coordinates(_localLatLong.Lat, _localLatLong.Lng)).RequestAsync();
             
@@ -733,13 +734,14 @@ namespace what3pass
                 grd_gridoverlay.Height = 160;
             }
 
-            if (mapView.Zoom < 19)
+            if (mapView.Zoom < 20)
             {
+                grd_gridoverlay.Visibility = Visibility.Hidden;
                 btn_gridoverlay.IsEnabled = false;
                 btn_mapsquare.IsEnabled = false;
-                btn_mapcircle.IsEnabled = false;
+                btn_mapcircle.IsEnabled = true;
             }
-            else if (_currentEntryStage == "Map" && mapView.Zoom >= 19)
+            else if (_currentEntryStage == "Map" && mapView.Zoom > 19)
             {
                 btn_gridoverlay.IsEnabled = true;
                 btn_mapsquare.IsEnabled = true;
@@ -952,8 +954,11 @@ namespace what3pass
             txtbox_gridwords.Text = "";
 
             btn_newentry_next.IsEnabled = true;
+            btn_newentry_next.Content = "Next";
             btn_newentry_back.Visibility = Visibility.Visible;
             btn_newentry_next.Visibility = Visibility.Visible;
+
+            lbl_genpassword.Visibility = Visibility.Hidden;
 
             ClearGridSelections();
             txtbox_gridwords.Text = "";
@@ -989,7 +994,7 @@ namespace what3pass
             if (grd_gridoverlay.Visibility == Visibility.Visible)
             {
                 Point relativePoint = btn_44.TransformToAncestor(this).Transform(new Point(0, 0));
-                _localLatLong = mapView.FromLocalToLatLng((int)relativePoint.X - 350, (int)relativePoint.Y - 10);
+                _localLatLong = mapView.FromLocalToLatLng((int)relativePoint.X - 512, (int)relativePoint.Y - 25);
 
                 var indexResult = await _what3wordsAPIWrapper.ConvertTo3WA(new Coordinates(_localLatLong.Lat, _localLatLong.Lng)).RequestAsync();
 
@@ -1015,7 +1020,7 @@ namespace what3pass
                 foreach (var btn in _ActiveButtons)
                 {
                     Point point = btn.TransformToAncestor(this).Transform(new Point(0, 0));
-                    var localLatLng = mapView.FromLocalToLatLng((int)point.X - 350, (int)point.Y - 10);
+                    var localLatLng = mapView.FromLocalToLatLng((int)point.X - 512, (int)point.Y - 25);
 
                     var result = await Task.Run(() => GetAddressesAsync(new Coordinates(localLatLng.Lat, localLatLng.Lng)));
 

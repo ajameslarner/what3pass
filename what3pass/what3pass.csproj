@@ -217,5 +217,11 @@
   <ItemGroup>
     <Resource Include="icons8-ok.gif" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Untitled.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="W3P-logo.jpg" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

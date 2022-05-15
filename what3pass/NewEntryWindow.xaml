@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:what3pass"
         xmlns:gif="http://wpfanimatedgif.codeplex.com"
         mc:Ignorable="d"
-        Title="what3pass" Height="535" Width="905" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize">
+        Title="What3Pass - New Entry" Height="600" Width="1080" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" Icon="/W3P-logo.jpg">
     <Window.Resources>
         <ImageBrush x:Key="ButtonImage"></ImageBrush>
         <Style TargetType="Button">
@@ -36,19 +36,19 @@
     </Window.Resources>
     <Grid>
         <DockPanel LastChildFill = "True">
-            <StackPanel DockPanel.Dock = "Left" Width="350">
+            <StackPanel DockPanel.Dock = "Left" Width="500">
                 <Label Content="What3Pass" FontSize="58" FontFamily="Segoe UI Variable Display Light" Height="100" Width="350" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
-                <GridSplitter Height="10" Width="350" />
+                <GridSplitter Height="10" Width="500" />
                 <Grid Height="410">
-                    <Grid x:Name="grd_newentry_begin" HorizontalAlignment="Center" Width="200" Margin="0,26,0,35" Visibility="Hidden">
-                        <Label Content="Let's begin..." FontSize="18" FontFamily="Segoe UI Variable Display Light" HorizontalContentAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="100" Height="50" Margin="0,124,0,0" HorizontalAlignment="Center" />
+                    <Grid x:Name="grd_newentry_begin" HorizontalAlignment="Center" Width="250" Margin="0,26,0,35" Visibility="Hidden">
+                        <Label Content="Let's begin..." FontSize="26" FontFamily="Segoe UI Variable Display Light" HorizontalContentAlignment="Center" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="250" Height="150" Margin="0,90,0,0" HorizontalAlignment="Center" />
                     </Grid>
-                    <Grid x:Name="grd_newentry_data" HorizontalAlignment="Center" Width="250" Margin="0,26,0,35" Visibility="Hidden">
-                        <TextBlock Text="Enter the details for your account you wish to store, otherwise create a new entry and generate a strong password instead!" FontSize="14" FontFamily="Segoe UI Variable Display Light" VerticalAlignment="Top" Height="89" Width="206" HorizontalAlignment="Center" TextWrapping="Wrap" Margin="0,59,0,0" TextAlignment="Center" />
-                        <TextBox x:Name="txt_username" Text="Username..." GotFocus="txt_username_GotFocus" LostFocus="txt_username_LostFocus" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0,189,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="25" Width="180" BorderBrush="{x:Null}" Background="#FFF1F1F1"/>
-                        <PasswordBox x:Name="txt_password" Password="Password..." GotFocus="txt_password_GotFocus" LostFocus="txt_password_LostFocus" HorizontalAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Top" Width="180" BorderBrush="{x:Null}" Background="#FFF1F1F1" Height="25" Margin="0,219,0,0"/>
-                        <Button x:Name="btn_generatepass" Click="btn_generatepass_Click" Content="Generate Password" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="0,249,0,0" VerticalAlignment="Top" Height="26" FontSize="8" Width="84" BorderBrush="{x:Null}" Background="#FFF1F1F1"/>
-                        <ComboBox x:Name="txt_platform" GotFocus="txt_platform_GotFocus" LostFocus="txt_platform_LostFocus" IsEditable="True" Text="Platform..." BorderBrush="{x:Null}" Background="#FFF1F1F1" HorizontalAlignment="Center" Margin="0,159,0,0" VerticalAlignment="Top" Width="180" Height="25">
+                    <Grid x:Name="grd_newentry_data" HorizontalAlignment="Center" Width="400" Margin="0,25,0,35" Visibility="Hidden">
+                        <TextBlock Text="Enter the details for your account you wish to store, otherwise create a new entry and generate a strong password instead!" FontSize="18" FontFamily="Segoe UI Variable Display Light" VerticalAlignment="Top" Height="76" Width="356" HorizontalAlignment="Center" TextWrapping="Wrap" Margin="0,25,0,0" TextAlignment="Center" />
+                        <TextBox x:Name="txt_username" Text="Username..." Foreground="Gray" GotFocus="txt_username_GotFocus" LostFocus="txt_username_LostFocus" HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="0,187,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="35" Width="250" BorderBrush="{x:Null}" Background="#FFF1F1F1"/>
+                        <PasswordBox x:Name="txt_password" Password="Password..." Foreground="Gray" GotFocus="txt_password_GotFocus" LostFocus="txt_password_LostFocus" HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Top" Height="35" Width="250" BorderBrush="{x:Null}" Background="#FFF1F1F1" Margin="0,227,0,0"/>
+                        <Button x:Name="btn_generatepass" Click="btn_generatepass_Click" Content="Generate Password" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="0,279,0,0" VerticalAlignment="Top" Height="37" FontSize="8" Width="136" BorderBrush="{x:Null}" Background="#FFF1F1F1"/>
+                        <ComboBox x:Name="txt_platform" GotFocus="txt_platform_GotFocus" Foreground="Gray" LostFocus="txt_platform_LostFocus" IsEditable="True" Text="Platform..." BorderBrush="{x:Null}" Background="#FFF1F1F1" HorizontalAlignment="Center" VerticalContentAlignment="Center" Margin="0,118,0,0" VerticalAlignment="Top" Height="35" Width="250">
                             <ComboBoxItem Content="Google"/>
                             <ComboBoxItem Content="Youtube"/>
                             <ComboBoxItem Content="Facebook"/>
@@ -60,24 +60,26 @@
                             <ComboBoxItem Content="Twitter"/>
                             <ComboBoxItem Content="Github"/>
                         </ComboBox>
-                        <Label x:Name="lbl_genpassword" Visibility="Hidden" Content="gen_password" HorizontalAlignment="Center" Margin="0,280,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" Height="27" Width="232" FontSize="10" FontFamily="Segoe UI Variable Display" Foreground="Green"/>
+                        <Label x:Name="lbl_genpassword" Visibility="Hidden" Content="gen_password" HorizontalAlignment="Center" Margin="0,320,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" Height="27" Width="232" FontSize="10" FontFamily="Segoe UI Variable Display" Foreground="Green"/>
                     </Grid>
                     <Grid x:Name="grd_newentry_map" HorizontalAlignment="Center" Width="250" Margin="0,26,0,35" Visibility="Hidden">
-                        <TextBlock Text="Navigate to your chosen position and enable the grid to choose the safe-zones where your data can be accessed from." FontSize="14" FontFamily="Segoe UI Variable Display Light" VerticalAlignment="Top" Height="89" Width="206" HorizontalAlignment="Center" TextWrapping="Wrap" Margin="0,59,0,0" TextAlignment="Center" />
-                        <TextBox x:Name="txtbox_gridwords" HorizontalAlignment="Center" IsReadOnly="True" Margin="0,174,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="190" Height="90"/>
+                        <TextBlock Text="Navigate to your chosen position and enable the grid to choose the safe-zones where your data can be accessed from." FontSize="18" FontFamily="Segoe UI Variable Display Light" VerticalAlignment="Top" Height="100" Width="250" HorizontalAlignment="Center" TextWrapping="Wrap" Margin="0,5,0,0" TextAlignment="Center" />
+                        <TextBox x:Name="txtbox_gridwords" HorizontalAlignment="Center" IsReadOnly="True" Margin="0,125,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="200" Height="200"/>
                     </Grid>
-                    <Grid x:Name="grd_newentry_processing" HorizontalAlignment="Center" Width="250" Margin="0,26,0,35" Visibility="Hidden">
-                        <TextBlock Text="Processing a complex mathematical equation, please wait..." FontSize="18" FontFamily="Segoe UI Variable Display Light" VerticalAlignment="Top" Height="89" Width="206" HorizontalAlignment="Center" TextWrapping="Wrap" Margin="0,44,0,0" TextAlignment="Center" />
-                        <Image gif:ImageBehavior.AnimatedSource="/icons8-qr-code.gif" Width="50" Height="50" />
+                    <Grid x:Name="grd_newentry_processing" HorizontalAlignment="Center" Width="300" Margin="0,26,0,35" Visibility="Hidden">
+                        <TextBlock Text="Processing a complex mathematical equation, please wait..." FontSize="28" FontFamily="Segoe UI Variable Display Light" VerticalAlignment="Top" Height="200" Width="300" HorizontalAlignment="Center" TextWrapping="Wrap" Margin="0,25,0,0" TextAlignment="Center" />
+                        <Image gif:ImageBehavior.AnimatedSource="/icons8-qr-code.gif" Width="100" Height="100" Margin="0,200,0,0" />
                     </Grid>
                     <Grid x:Name="grd_newentry_processed" HorizontalAlignment="Center" Width="250" Margin="0,26,0,35" Visibility="Hidden">
-                        <TextBlock Text="All done! Password securely stored..." FontSize="18" FontFamily="Segoe UI Variable Display Light" VerticalAlignment="Top" Height="89" Width="206" HorizontalAlignment="Center" TextWrapping="Wrap" Margin="0,44,0,0" TextAlignment="Center" />
-                        <Image gif:ImageBehavior.AnimatedSource="/icons8-ok.gif" gif:ImageBehavior.AnimationSpeedRatio="0.75" Width="50" Height="50" gif:ImageBehavior.RepeatBehavior="2x" />
-                        <Button x:Name="btn_newentry_process" Visibility="Visible" Click="btn_newentry_process_Click" Content="Return" HorizontalAlignment="Center" VerticalAlignment="Top" Height="25" Width="56" BorderBrush="{x:Null}" Margin="0,235,0,0" />
+                        <TextBlock Text="All done! Password securely stored." FontSize="26" FontFamily="Segoe UI Variable Display Light" VerticalAlignment="Top" Height="125" Width="250" HorizontalAlignment="Center" TextWrapping="Wrap" Margin="0,50,0,0" TextAlignment="Center" />
+                        <Image gif:ImageBehavior.AnimatedSource="/icons8-ok.gif" gif:ImageBehavior.AnimationSpeedRatio="0.75" Width="100" Height="100" gif:ImageBehavior.RepeatBehavior="2x"  Margin="0,80,0,0" />
+                        <Button x:Name="btn_newentry_process" Visibility="Visible" Click="btn_newentry_process_Click" Content="Return" HorizontalAlignment="Center" VerticalAlignment="Top" Height="25" Width="100" BorderBrush="{x:Null}" Margin="0,325,0,0" />
                     </Grid>
-                    <Button x:Name="btn_newentry_next" Content="Next" HorizontalAlignment="Left" Margin="175,350,0,0" VerticalAlignment="Top" Height="25" Width="56" BorderBrush="{x:Null}" Click="btn_newentry_next_Click"/>
-                    <Button x:Name="btn_newentry_back" Content="Back" HorizontalAlignment="Left" Margin="119,350,0,0" VerticalAlignment="Top" Height="25" Width="56" BorderBrush="{x:Null}" Click="btn_newentry_back_Click"/>
                 </Grid>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button x:Name="btn_newentry_back" Content="Back" HorizontalAlignment="Left" Margin="0,-25,200,0" VerticalAlignment="Top" Height="25" Width="56" BorderBrush="{x:Null}" Click="btn_newentry_back_Click"/>
+                    <Button x:Name="btn_newentry_next" Content="Next" HorizontalAlignment="Left" Margin="0,-25,0,0" VerticalAlignment="Top" Height="25" Width="56" BorderBrush="{x:Null}" Click="btn_newentry_next_Click"/>
+                </StackPanel>
             </StackPanel>
             <StackPanel DockPanel.Dock="Right" Orientation="Vertical" Background="White" Width="35">
                 <Button x:Name="btn_location" BorderBrush="#00000000" Click="btn_location_Click" Margin="0,10,0,0" Foreground="#00000000" Height="25" Width="25">
@@ -117,12 +119,14 @@
                 </Button>
             </StackPanel>
             <StackPanel DockPanel.Dock ="Right"/>
+            <Grid x:Name="grd_mappanel" Visibility="Visible">
+                <gmaps:GMapControl x:Name="mapView" MouseLeftButtonUp="mapView_MouseLeftButtonUp" OnMapDrag="mapView_OnMapDrag" OnPositionChanged="mapView_OnPositionChanged" OnMapZoomChanged="mapView_OnMapZoomChanged" Loaded="mapView_Loaded" Width="500" Height="500" >
+                </gmaps:GMapControl>
+
+            </Grid>
         </DockPanel>
-        <Grid x:Name="grd_mappanel" Visibility="Hidden">
-            <gmaps:GMapControl x:Name="mapView" MouseLeftButtonUp="mapView_MouseLeftButtonUp" OnMapDrag="mapView_OnMapDrag" OnPositionChanged="mapView_OnPositionChanged" OnMapZoomChanged="mapView_OnMapZoomChanged" Margin="345,15,25,0" Loaded="mapView_Loaded" Width="500" Height="500" >
-            </gmaps:GMapControl>
-        </Grid>
-        <Grid x:Name="grd_gridoverlay" Background="Transparent" Height="160" Width="160" Margin="360,50,25,0" Visibility="Visible" IsEnabled="False" IsEnabledChanged="grd_gridoverlay_IsEnabledChanged">
+        <Label x:Name="lbl_gpsdeviceconnected" Visibility="Hidden" Opacity="0.65" Width="200" Height="50" Content="GPS Device Connected" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="500,425,0,0" Foreground="White" Background="Black"/>
+        <Grid x:Name="grd_gridoverlay" Background="Transparent" Height="160" Width="160" Margin="500,33,2,0" Visibility="Visible" IsEnabled="False" IsEnabledChanged="grd_gridoverlay_IsEnabledChanged">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
@@ -257,6 +261,5 @@
             <Button x:Name="btn_98" Click="btn_gridClick" Content="x" Grid.Column="8" Grid.Row="9" BorderBrush="{x:Null}" Background="LightBlue" Opacity="0.399" Cursor="Hand"></Button>
             <Button x:Name="btn_99" Click="btn_gridClick" Content="x" Grid.Column="9" Grid.Row="9" BorderBrush="{x:Null}" Background="LightBlue" Opacity="0.399" Cursor="Hand"></Button>-->
         </Grid>
-        <Label x:Name="lbl_gpsdeviceconnected" Visibility="Hidden" Opacity="0.65" Content="GPS Device Connected" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White" Margin="525,397,187,77" Background="Black"/>
     </Grid>
 </Window>
