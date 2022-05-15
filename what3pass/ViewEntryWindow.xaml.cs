@@ -70,7 +70,7 @@ namespace what3pass
 
             _geoCoordinate = new GeoCoordinate();
 
-            _geoCoordinateWatcher.PositionChanged += async (sender, e) =>
+            _geoCoordinateWatcher.PositionChanged += (sender, e) =>
             {
                 _geoCoordinate.HorizontalAccuracy = 10.0;
                 _geoCoordinate = e.Position.Location;
