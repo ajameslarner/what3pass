@@ -1,1 +1,1 @@
-TODO!: Needs refactoring, concept app for demo purposes
+TODO!: Needs refactoring, concept app for demo purposes only
